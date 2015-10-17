@@ -1,0 +1,25 @@
+/*
+    Lifetime
+    @James/Argoms
+    
+    Dies after a given time
+*/
+class Lifetime : ZilchComponent
+{
+    [Property]
+    var Life:Real = 1;
+    
+    function Initialize(init : CogInitializer)
+    {
+        Zero.Connect(this.Space, Events.LogicUpdate, this.OnLogicUpdate);
+    }
+
+    function OnLogicUpdate(event : UpdateEvent)
+    {
+        this.Life -= event.Dt;
+        if(this.Life < 0)
+        {
+            this.Owner.Destroy();
+        }
+    }
+}

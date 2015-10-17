@@ -1,0 +1,8 @@
+TextContent = 
+{
+	ZilchScriptBuilder = 
+	{
+		string Name = "PickupBehavior",
+		uint64 ResourceId = 55c7c2ac8ca3198d,
+	},
+},

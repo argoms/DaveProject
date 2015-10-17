@@ -1,0 +1,64 @@
+/*
+    MissileEnemyBehavior
+    @James/Argoms
+    
+    Missile enemies attempt to get within a certain distance of the player and then repeatedly spawn small missiles that chase the player.
+*/
+class MissileEnemyBehavior : ZilchComponent
+{
+    [Property]
+    var FireRate:Real = 0.1; //time between shots
+    
+    [Property]
+    var TimeBetweenVolleys:Real = 5; //time in between volleys of missiles
+    
+    [Property]
+    var ShotsPerVolley:Integer = 5; //number of shots before a volley ends, with (timebetweenvolleys) seconds until next volley 
+    
+    
+    var ShotCounter:Integer = 0; //number of shots in current volley
+    var TimeCounter:Real = 0; //timer
+    
+    var Target:Transform; //targe tlocation
+    
+    var Shooting:Boolean = false; //whether the enemy is shooting or not
+    
+    function Initialize(init : CogInitializer)
+    {
+        Zero.Connect(this.Space, Events.LogicUpdate, this.OnLogicUpdate);
+    }
+
+    function OnLogicUpdate(event : UpdateEvent)
+    {
+        this.TimeCounter += event.Dt;
+        
+        if(!this.Shooting)
+        {
+            if(this.TimeCounter > this.TimeBetweenVolleys)
+            {
+                this.Shooting = true;
+            }
+        } else {
+            if(this.TimeCounter > this.FireRate)
+            {
+                //shooting:
+                this.TimeCounter = 0;
+                this.Shoot();
+                this.ShotCounter += 1;
+                
+                //stop shooting if volley completed:
+                if(this.ShotCounter == this.ShotsPerVolley)
+                {
+                    this.Shooting = false;
+                    this.ShotCounter = 0;
+                }
+            }
+        }
+    }
+    
+    function Shoot()
+    {
+        var enemy:Cog = this.Space.CreateAtPosition(Archetype.MiniEnemy, this.Owner.Transform.Translation); //spawned missile object
+        enemy.ChaseTarget.Target = this.Target;
+    }
+}

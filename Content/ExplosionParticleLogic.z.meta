@@ -1,0 +1,8 @@
+TextContent = 
+{
+	ZilchScriptBuilder = 
+	{
+		string Name = "ExplosionParticleLogic",
+		uint64 ResourceId = 55c7c8d47bae5c26,
+	},
+},

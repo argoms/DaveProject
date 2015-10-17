@@ -1,0 +1,108 @@
+/*
+    ChaseTarget
+    @James/Argoms
+    
+    Makes object chase after given transform. Generally for enemies, but can be applicable for other things.
+*/
+class ChaseTarget : ZilchComponent
+{
+    var Target:Transform;
+    [Property]
+    var MoveSpeed:Integer = 100; //movement speed, note that this is a force applied and not velocity, will not scale linearly
+    [Property]
+    var Decel:Integer = 100; //how quickly the player slows down, combne with MoveSpeed to define slideyness of movement
+   // [Property]
+   // var TargetObject:
+    [Property]
+    var Disabled:Boolean = false;
+    
+    [Property]
+    var MinDistance:Real = 0;
+    
+    [Property]
+    var Zombie:Boolean = false; //doug zombie talk thing
+    var ZombieTimer:Real = 2;
+    var Movement:Real3 = Real3(0,0,0);
+    
+    var RandomGenerator:Random = Random();//random number generator
+    
+    function Initialize(init : CogInitializer)
+    {
+        if(!this.Disabled)
+        {
+            Zero.Connect(this.Space, Events.LogicUpdate, this.OnLogicUpdate);
+        }
+    }
+
+    function OnLogicUpdate(event : UpdateEvent)
+    {
+        this.ZombieTimer -= event.Dt;
+        if(this.Target != null)
+        {
+            if(this.Vec2Magnitude(this.Owner.Transform.Translation - this.Target.Translation) > (this.MinDistance * this.MinDistance))
+            {
+                if(!this.Zombie)
+                {
+                    this.Owner.DragEffect.Active = false;
+                    var timePassed:Real = event.Dt;
+                    
+                    //gets direction to move in
+                    this.Movement = this.Target.Translation - this.Owner.Transform.Translation;
+                    Math.Normalize(this.Movement); 
+                    var netForce:Real3 = Real3(0,0,0); 
+                    
+                    //applies movement force
+                    netForce += this.Movement*this.MoveSpeed*timePassed;
+                    netForce -= this.Owner.RigidBody.Velocity*this.Decel*timePassed;
+                    this.Owner.RigidBody.ApplyForce(netForce);
+                } else {
+                    //this.Owner.Orientation.LookAtPointWithUp(this.Target.Translation, Real3(0,1,0));
+                    
+                    this.Owner.DragEffect.Active = false;
+                    var timePassed:Real = event.Dt;
+                    
+                    //gets direction to move in
+                    Math.Normalize(this.Movement); 
+                    var netForce:Real3 = Real3(0,0,0); 
+                    
+                    
+                    if(this.ZombieTimer < 0)
+                    {
+                        this.ZombieTimer = 0.5;
+                        var result:Real = this.RandomGenerator.Range(1,10);
+                        if(result < 4)
+                        {
+                            this.Movement = this.Target.Translation - this.Owner.Transform.Translation;
+                            
+                        } else if(result > 4 && result < 8)
+                        {
+                            var a = this.Target.Translation - this.Owner.Transform.Translation;
+                            this.Movement = Real3(a.Y, -a.X, 0);
+                        } else {
+                            this.Movement = Real3(0,0,0);
+                        }
+                        
+                        
+                    }
+                    netForce += this.Movement*this.MoveSpeed*timePassed;
+                    netForce -= this.Owner.RigidBody.Velocity*this.Decel*timePassed;
+                    this.Owner.RigidBody.ApplyForce(netForce*3);
+                    
+                }
+                
+            } else {
+                
+                this.Owner.DragEffect.Active = true;
+                this.Owner.DragEffect.Drag = 0.9;
+            }
+        } else {
+            //Console.WriteLine("no target for chase" );
+        }
+        
+    }
+    
+    function Vec2Magnitude(input:Real3):Real //outputs magnitude of a value's X and Y only, SQUARE of the answer, not the actual answer
+    {
+        return (input.X * input.X) + (input.Y * input.Y);
+    }
+}

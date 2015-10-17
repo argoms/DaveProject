@@ -1,0 +1,41 @@
+/*
+    ExpandObject
+    @James/Argoms
+    
+    Makes an object grow.
+    
+    Used for aoe explosion effects in some cases.
+*/
+class ExpandObject : ZilchComponent
+{
+    var ExpansionSpeed:Real = 10;
+    var ExpansionDecayRate:Real = 5;
+    
+    var ExpansionDuration:Real = 1;
+    var Timer:Real = 0;
+    
+    function Initialize(init : CogInitializer)
+    {
+        Console.WriteLine("AAA");
+        Zero.Connect(this.Space, Events.LogicUpdate, this.OnLogicUpdate);
+    }
+    
+    function Created()
+    {
+        
+        Zero.Connect(this.Space, Events.LogicUpdate, this.OnLogicUpdate);
+    }
+    function OnLogicUpdate(event : UpdateEvent)
+    {
+        this.Owner.DebugDraw(); //debug drawing, remember to disable later, seems like it doesnt sync with visuals atm
+        
+        if(this.Timer < this.ExpansionDuration)
+        {
+            this.Owner.Transform.Scale *= 1 + (this.ExpansionSpeed * event.Dt);
+            this.ExpansionSpeed *= 1 - (this.ExpansionDecayRate * event.Dt);
+            
+            this.Timer += event.Dt; 
+        }
+        
+    }
+}

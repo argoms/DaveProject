@@ -1,0 +1,8 @@
+TextContent = 
+{
+	ZilchScriptBuilder = 
+	{
+		string Name = "PlayerProjectileExplodeOnDeath",
+		uint64 ResourceId = 56274d07f6bb89b6,
+	},
+},

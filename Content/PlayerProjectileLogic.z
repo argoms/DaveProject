@@ -1,0 +1,96 @@
+/*
+    PlayerProjectileLogic
+    @James/Argoms
+    
+    Behavior attached to projectiles that damage enemies.
+*/
+class PlayerProjectileLogic : ZilchComponent
+{
+    var TimeCounter:Real = 0; //used to time particle spawns
+    
+    var Damage:Integer = 1;
+    
+    var Dead:Boolean;
+    
+    var LifeTime:Real = 2;
+    
+    var PenetratesTargets:Boolean = false;
+    
+    function Initialize(init : CogInitializer)
+    {
+        Zero.Connect(this.Space, Events.LogicUpdate, this.OnLogicUpdate);
+        Zero.Connect(this.Owner, Events.CollisionStarted,this.OnCollisionStarted);
+
+    }
+
+    function OnLogicUpdate(event : UpdateEvent)
+    {
+        
+        /*
+        if(this.TimeCounter > 0.01)
+        {
+            var particle:Cog = null;
+            particle = this.Space.CreateAtPosition(Archetype.ExplosionParticle, this.Owner.Transform.Translation);
+            particle.Sprite.Color = Real4(0, 0.5, 0.76, 1);
+            this.TimeCounter = 0;
+        }
+        */
+        
+        
+        if(this.Dead)
+        {
+            this.TimeCounter -= event.Dt;
+            if(this.TimeCounter < 0)
+            {
+                this.Owner.Destroy();
+            }
+        } else {
+            this.LifeTime -= event.Dt;
+            if(this.LifeTime < 0)
+            {
+                this.KillSelf(2);
+            }
+        }
+    }
+    
+    function OnCollisionStarted(event : CollisionEvent)
+    {
+        if(!this.Dead)
+        {
+            //Console.WriteLine(event.OtherObject);
+            var otherObject:Cog = event.OtherObject;
+            if(otherObject.EnemyHealth != null) //behavior if the target hit is an enemy, as all enemies have the enemyhealth component
+            {
+                var text:Cog = this.Space.CreateAtPosition(Archetype.DamageText, event.OtherObject.Transform.Translation + Real3(0,0.5,1));
+                text.DamageTextBehavior.SetText("`this.Damage`");
+                
+                //there's probably a more elegant way to do this but the documentation is pretty bad for zero :c
+                //Console.WriteLine("hit enemy");
+                otherObject.EnemyHealth.TakeDamage(this.Damage); //does damage to enemy on hit
+                
+                if(!this.PenetratesTargets)
+                {
+                    this.KillSelf(1);
+                }
+                
+            } else if(otherObject.Name == "Wall")
+            {
+                this.KillSelf(1);
+            }
+        }
+    }
+    
+    function KillSelf(col : Integer)
+    {
+        if(this.Owner.PlayerProjectileExplodeOnDeath != null)
+        {
+            var explosion:PlayerProjectileExplodeOnDeath = this.Owner.PlayerProjectileExplodeOnDeath;
+            explosion.Act(col);
+        }
+        this.Owner.RigidBody.Velocity = Real3(0, 0, 0);
+        this.Owner.SphericalParticleEmitter.Active = false;
+        this.Owner.Sprite.Visible = false;
+        this.TimeCounter = 0.9;
+        this.Dead = true;
+    }
+}

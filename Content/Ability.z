@@ -1,0 +1,196 @@
+/*
+    Ability
+    @James/Argoms
+    
+    Contains abilitiy behaviors
+*/
+class Ability 
+{
+    var Type:Integer; //type of ability
+    var Power:Real;
+    var Name:String;
+    
+    var Player:Cog;
+    
+    var Cooldown:Real;
+    var CooldownTimer:Real;
+    
+    /* Abilities:
+    * 1: Basic shooting
+    * 2: mortar- weak projectile that explodes into lots of little projectiles
+    * 3: railgun- penetrates targets
+    * 4: mine- lays stationary mines that explode on contact with enemy
+    * 5: bomb- large explosion starting from player
+    */
+    constructor(abilityType : Integer, abilityStrength : Real)
+    {
+        //Console.WriteLine(a);
+        this.Type = abilityType;
+        this.Power = abilityStrength;
+
+        //set ability info based on input:
+        if(abilityType == 1)
+        {
+            this.Name = "Shooty";
+            this.Cooldown = 0.5;
+            this.CooldownTimer = 0;
+        } else if(abilityType == 2)
+        {
+            this.Name = "Mortar";
+            this.Cooldown = 2.5;
+            this.CooldownTimer = 0;
+        } else if(abilityType == 3)
+        {
+            this.Name = "Railgun";
+            this.Cooldown = 0.5;
+            this.CooldownTimer = 0;
+        } else if(abilityType == 4)
+        {
+            this.Name = "Mine";
+            this.Cooldown = 1;
+            this.CooldownTimer = 0;
+        } else if(abilityType == 5)
+        {
+            this.Name = "Bomb";
+            this.Cooldown = 3;
+            this.CooldownTimer = 0;
+        }
+    }
+    
+    function Simulate(dt:Real)
+    {
+        this.CooldownTimer -= dt;
+    }
+    
+    function Fire()
+    {
+        if(this.CooldownTimer <= 0)
+        {
+            this.CooldownTimer = this.Cooldown;
+            
+            //activate according to ability type:
+            if(this.Type == 1)
+            {
+                this.BasicShoot(this.Power);
+            } else if(this.Type == 2)
+            {
+                this.HeavyShoot(this.Power);
+            } else if(this.Type == 3)
+            {
+                this.FastShoot(this.Power);
+            } else if(this.Type == 4)
+            {
+                this.Mine(this.Power);
+            } else if(this.Type == 5)
+            {
+                this.Bomb(this.Power);
+            }
+        }
+    }
+    
+    function BasicShoot(power : Real)
+    {
+        var projectile:Cog = this.Player.Space.CreateAtPosition(Archetype.Bullet, this.Player.Transform.Translation); //create the bullet
+        projectile.PlayerProjectileLogic.Damage = 1+(power as Integer * 3);
+        
+        //get the direction for the bullet to travel:
+        var aim:Real3 = Real3(10, 10, 0);
+        var cursor:Real2 = Zero.Mouse.ScreenPosition;
+        var worldCursor:Real3 = this.Player.LevelSettings.CameraViewport.ScreenToWorldZPlane(cursor, 0);
+        aim = Math.Normalize(Real3(worldCursor.X-this.Player.Transform.Translation.X, worldCursor.Y-this.Player.Transform.Translation.Y, 0));
+
+        //applies force in the direction found:
+        projectile.RigidBody.ApplyLinearVelocity(aim*15*this.Power*this.Power);
+    }
+    
+    function HeavyShoot(power : Real)
+    {
+        //get the direction for the bullet to travel:
+        var aim:Real3 = Real3(10, 10, 0);
+        var cursor:Real2 = Zero.Mouse.ScreenPosition;
+        var worldCursor:Real3 = this.Player.LevelSettings.CameraViewport.ScreenToWorldZPlane(cursor, 0);
+        aim = Math.Normalize(Real3(worldCursor.X-this.Player.Transform.Translation.X, worldCursor.Y-this.Player.Transform.Translation.Y, 0));
+        
+        var projectile:Cog = this.Player.Space.CreateAtPosition(Archetype.Bullet, this.Player.Transform.Translation); //create the bullet
+        projectile.Transform.Scale = Real3(0.1, 0.1, 3);
+        projectile.PlayerProjectileLogic.Damage = power as Integer;
+        projectile.PlayerProjectileLogic.LifeTime = 0.25 + this.Vec2Magnitude(Real3(
+            worldCursor.X-this.Player.Transform.Translation.X, 
+            worldCursor.Y-this.Player.Transform.Translation.Y, 
+            0))*0.05;
+        
+        projectile.AddComponentByName("PlayerProjectileExplodeOnDeath");
+        var projectileMod1:PlayerProjectileExplodeOnDeath = projectile.PlayerProjectileExplodeOnDeath;
+        projectileMod1.NumProjectiles = 24;
+        projectileMod1.ProjectileDamage = power as Integer * 2;
+        projectileMod1.Color = Real4(0, 0.5, 1, 0.5);
+        projectileMod1.ExplodeOnCollision = false;
+        
+        
+
+        //applies force in the direction found:
+        projectile.RigidBody.ApplyLinearVelocity(aim*5*this.Power);
+    }
+    
+    function FastShoot(power : Real)
+    {
+        var projectile:Cog = this.Player.Space.CreateAtPosition(Archetype.Bullet, this.Player.Transform.Translation); //create the bullet
+        projectile.Transform.Scale = Real3(0.2, 0.2, 1);
+        projectile.PlayerProjectileLogic.Damage = (power as Integer * 2);
+        projectile.PlayerProjectileLogic.PenetratesTargets = true;
+        
+        //get the direction for the bullet to travel:
+        var aim:Real3 = Real3(10, 10, 0);
+        var cursor:Real2 = Zero.Mouse.ScreenPosition;
+        var worldCursor:Real3 = this.Player.LevelSettings.CameraViewport.ScreenToWorldZPlane(cursor, 0);
+        aim = Math.Normalize(Real3(worldCursor.X-this.Player.Transform.Translation.X, worldCursor.Y-this.Player.Transform.Translation.Y, 0));
+
+        //applies force in the direction found:
+        projectile.RigidBody.ApplyLinearVelocity(aim*(20+10*this.Power));
+    }
+    
+    function Mine(power : Real)
+    {
+        var projectile:Cog = this.Player.Space.CreateAtPosition(Archetype.Bullet, this.Player.Transform.Translation); //create the bullet
+        projectile.Transform.Scale = Real3(0.5, 0.5, 3);
+        projectile.PlayerProjectileLogic.Damage = power as Integer;
+        projectile.Sprite.Color = Real4(0.1, 0.1, 0.1, 0.8);
+        projectile.PlayerProjectileLogic.LifeTime = 10;
+        
+        projectile.AddComponentByName("PlayerProjectileExplodeOnDeath");
+        var projectileMod1:PlayerProjectileExplodeOnDeath = projectile.PlayerProjectileExplodeOnDeath;
+        projectileMod1.NumProjectiles = 16;
+        projectileMod1.ProjectileDamage = power as Integer;
+        projectileMod1.Color = Real4(0, 0.5, 1, 0.5);
+    }
+    
+    function Bomb(power : Real)
+    {
+        
+        var projectile:Cog = this.Player.Space.CreateAtPosition(Archetype.Bullet, this.Player.Transform.Translation); //create the bullet
+        projectile.Transform.Scale = Real3(1, 1, 3);
+        projectile.PlayerProjectileLogic.Damage = power as Integer * 3;
+        projectile.PlayerProjectileLogic.LifeTime = 1;
+        projectile.PlayerProjectileLogic.PenetratesTargets = true;
+        
+        /*
+        projectile.AddComponentByName("PlayerProjectileExplodeOnDeath");
+        var projectileMod1:PlayerProjectileExplodeOnDeath = projectile.PlayerProjectileExplodeOnDeath;
+        projectileMod1.NumProjectiles = 32;
+        projectileMod1.ProjectileDamage = power as Integer * 2;
+        projectileMod1.Color = Real4(0, 0.5, 1, 0.5);
+        projectileMod1.ExplodeOnCollision = false;
+        projectileMod1.CanPenetrateTargets = true;
+        */
+        
+        projectile.AddComponentByName("ExpandObject");
+        var explosion = projectile.ExpandObject;
+        explosion.Created();
+        Console.WriteLine(projectile.ExpandObject.Timer);
+    }
+    
+    function Vec2Magnitude(input:Real3):Real //outputs magnitude of a value's X and Y only, SQUARE of the answer, not the actual answer
+    {
+        return (input.X * input.X) + (input.Y * input.Y);
+    }
+}

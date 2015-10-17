@@ -1,0 +1,41 @@
+/*
+    PlayerProjectileExplodeOnDeath
+    @James/Argoms
+    
+    Component added to player's projectiles to create more projectiles on death (eg. explosion effect)
+*/
+class PlayerProjectileExplodeOnDeath : ZilchComponent
+{
+    
+    var RandomGenerator:Random = Random();//random number generator
+    
+    var Color:Real4 = Real4(1,1,1,1); //spawned projectile color
+    var NumProjectiles:Real = 2; //number of spawned projectiles
+    var ProjectileDamage:Real = 1; //damage of spawned projectiles
+    var ExplosionSpeed:Real = 5; //speed of spawned projectiles 
+    var ExplodeOnCollision:Boolean = true; //whether or not explosion triggers on colliding with another object
+    var ExplodeOnLifeEnd:Boolean = true; //whether or not explosion triggers if projectile finishes full lifespan
+    
+    var CanPenetrateTargets:Boolean = false; //whether or not spawned projectiles can penetrate targets
+    
+    function Initialize(init : CogInitializer)
+    {
+        //Zero.Connect(this.Space, Events.LogicUpdate, this.OnLogicUpdate);
+    }
+    
+    function Act(deathType : Integer) //called on projectile death
+    {
+        if((deathType == 1 && this.ExplodeOnCollision) || (deathType == 2 && this.ExplodeOnLifeEnd))
+        {
+            var particle:Cog = null;
+            for(var i:Integer = 0; i < this.NumProjectiles; i += 1)
+            {
+                particle = this.Space.CreateAtPosition(Archetype.Bullet, this.Owner.Transform.Translation);
+                particle.Sprite.Color = this.Color;
+                particle.PlayerProjectileLogic.PenetratesTargets = this.CanPenetrateTargets;
+                var explosionVector:Real3 = Math.Normalize(Real3(this.RandomGenerator.Range(-1, 1), this.RandomGenerator.Range(-1, 1), 0))*this.ExplosionSpeed;
+                particle.RigidBody.ApplyLinearVelocity(explosionVector);
+            }
+        }
+    }
+}

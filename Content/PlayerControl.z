@@ -1,0 +1,147 @@
+/*
+    PlayerControl
+    @James/Argoms
+    
+    Attached to the player object, controls movement and ability activation/selection/rerolling
+*/
+class PlayerControl : ZilchComponent
+{
+    [Property] //makes variable pop up in component menu
+    var Bullet:Archetype = null; //projectile that gets shot
+    [Property]
+    var MoveSpeed:Integer = 100; //movement speed, note that this is a force applied and not velocity, will not scale linearly
+    [Property]
+    var Decel:Integer = 100; //how quickly the player slows down, combne with MoveSpeed to define slideyness of movement
+    [Property]
+    var ShotSpeed:Integer = 50; //how quickly projectiles move
+    [Property]
+    var FireRate:Real = 0.2; //delay in seconds between shots
+    var TimePassedShooting:Real = 0; //used to find time between shots
+    
+    var PlayerOrientation:Integer = 1; //player facing left or right (1 = right)
+    
+    var CurrentAbility:Integer = 1; //currently selected ability
+    
+    function Initialize(init : CogInitializer)
+    {
+        Zero.Connect(this.Space, Events.LogicUpdate, this.OnLogicUpdate);
+        //var enemy:Cog = this.Space.CreateAtPosition(Archetype.BasicEnemy, this.Owner.Transform.Translation + Real3(2,0,0));
+       // enemy.ChaseTarget.Target = this.Owner.Transform;
+       
+        this.Owner.FindChildByName("Ability1Text").SpriteText.Color = Real4(0, 1, 1, 1);
+        this.Owner.FindChildByName("Ability2Text").SpriteText.Color = Real4(1, 1, 1, 1);
+        this.Owner.FindChildByName("Ability3Text").SpriteText.Color = Real4(1, 1, 1, 1);
+            
+            
+    }
+
+    function OnLogicUpdate(event : UpdateEvent)
+    {
+        this.TimePassedShooting += event.Dt;
+        
+        //ability activation:
+        /*
+        if(Zero.Mouse.IsButtonDown(MouseButtons.Left))
+        {
+            if(this.CurrentAbility == 1)
+            {
+                this.LevelSettings.LevelBehavior.Ability1.Fire();
+            } else if(this.CurrentAbility == 2)
+            {
+                this.LevelSettings.LevelBehavior.Ability2.Fire();
+            } else if(this.CurrentAbility == 3)
+            {
+                this.LevelSettings.LevelBehavior.Ability3.Fire();
+            }
+        }
+        */
+        if(Zero.Mouse.IsButtonDown(MouseButtons.Left))
+        {
+            this.LevelSettings.LevelBehavior.Ability1.Fire();
+        }
+        if(Zero.Mouse.IsButtonDown(MouseButtons.Right))
+        {
+            this.LevelSettings.LevelBehavior.Ability2.Fire();
+        }
+        if(Zero.Keyboard.KeyIsDown(Keys.Space))
+        {
+            this.LevelSettings.LevelBehavior.Ability3.Fire();
+        }
+        
+        //rerolling: (no cooldown atm)
+        if(Zero.Keyboard.KeyIsPressed(Keys.Q))
+        {
+            this.LevelSettings.LevelBehavior.RerollAbility(this.CurrentAbility);
+        }
+        this.UpdateMovement(event.Dt); //moves player
+        //Console.WriteLine("potato");
+        
+        
+        //ability swapping:
+        if(Zero.Keyboard.KeyIsPressed(Keys.One))
+        {
+            this.CurrentAbility = 1;
+            this.Owner.FindChildByName("Ability1Text").SpriteText.Color = Real4(0, 1, 1, 1);
+            this.Owner.FindChildByName("Ability2Text").SpriteText.Color = Real4(1, 1, 1, 1);
+            this.Owner.FindChildByName("Ability3Text").SpriteText.Color = Real4(1, 1, 1, 1);
+        } else if(Zero.Keyboard.KeyIsPressed(Keys.Two))
+        {
+            this.CurrentAbility = 2;
+            this.Owner.FindChildByName("Ability1Text").SpriteText.Color = Real4(1, 1, 1, 1);
+            this.Owner.FindChildByName("Ability2Text").SpriteText.Color = Real4(0, 1, 1, 1);
+            this.Owner.FindChildByName("Ability3Text").SpriteText.Color = Real4(1, 1, 1, 1);
+        } else if(Zero.Keyboard.KeyIsPressed(Keys.Three))
+        {
+            this.CurrentAbility = 3;
+            this.Owner.FindChildByName("Ability1Text").SpriteText.Color = Real4(1, 1, 1, 1);
+            this.Owner.FindChildByName("Ability2Text").SpriteText.Color = Real4(1, 1, 1, 1);
+            this.Owner.FindChildByName("Ability3Text").SpriteText.Color = Real4(0, 1, 1, 1);
+        }
+        
+        
+    }
+    
+    function UpdateMovement(timePassed:Real)
+    {
+        var animation:Sprite = this.Owner.FindChildByName("PlayerAnimation").Sprite;
+        var movement:Real3 = Real3(0, 0, 0); //gets movement direction
+        if(Zero.Keyboard.KeyIsDown(Keys.A))
+        {
+            movement += Real3 (-1, 0, 0);
+        }
+        if(Zero.Keyboard.KeyIsDown(Keys.D))
+        {
+            movement += Real3 (1, 0, 0);
+        }
+        if(Zero.Keyboard.KeyIsDown(Keys.W))
+        {
+            movement += Real3 (0, 1, 0);
+        }
+        if(Zero.Keyboard.KeyIsDown(Keys.S))
+        {
+            movement += Real3 (0, -1, 0);
+        }
+        
+        //stops player animation if there's no movement, plays if there is:
+        if(Math.Abs(movement.X)+Math.Abs(movement.Y) < 1)
+        {
+            animation.AnimationSpeed = 0;
+            animation.CurrentFrame = 3;
+            
+        } else {
+            animation.AnimationSpeed = 1;
+        }
+        Math.Normalize(movement); //stops diagonal movement from being faster
+        
+       
+        var netForce:Real3 = Real3(0,0,0); //applies movement force
+        netForce += movement*this.MoveSpeed*timePassed;
+        netForce -= Math.Normalize(this.Owner.RigidBody.Velocity)*this.Decel*timePassed;
+        this.Owner.RigidBody.ApplyForce(netForce*this.Owner.Transform.Scale.X*this.Owner.Transform.Scale.X);
+        //this.Owner.RigidBody.ApplyForce(movement*this.MoveSpeed*timePassed);
+        //this.Owner.RigidBody.ApplyForce(this.Owner.RigidBody.Velocity*-1*this.Decel*timePassed); //constant decel
+        
+    }
+    
+    
+}

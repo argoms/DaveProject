@@ -1,0 +1,8 @@
+TextContent = 
+{
+	ZilchScriptBuilder = 
+	{
+		string Name = "KillPlayerOnTouch",
+		uint64 ResourceId = 55c7ceadbc785572,
+	},
+},

@@ -1,0 +1,64 @@
+/*
+    KillPlayerOnTouch
+    @James/Argoms
+    
+    Kills the player on contact, will eventually be modified to do damage instead.
+*/
+class KillPlayerOnTouch : ZilchComponent
+{
+    /*
+        kills the player if they're touched, causes player to explode
+    */
+    var RandomGenerator:Random = Random();//random number generator
+    function Initialize(init : CogInitializer)
+    {
+        Zero.Connect(this.Space, Events.LogicUpdate, this.OnLogicUpdate);
+        Zero.Connect(this.Owner, Events.CollisionStarted,this.OnCollisionStarted);
+    }
+
+    function OnLogicUpdate(event : UpdateEvent)
+    {
+    }
+    
+    function OnCollisionStarted(event : CollisionEvent)
+    {
+        //Console.WriteLine(event.OtherObject.ArchetypeName);
+        
+        //only does stuff if player is hit:
+        if(event.OtherObject.ArchetypeName == "Player")
+        {
+            //create death particles:
+            var particle:Cog = null;
+            for(var i:Integer = 0; i < 8; i += 1)
+            {
+                particle = this.Space.CreateAtPosition(Archetype.ExplosionParticle, event.OtherObject.Transform.Translation+Real3(0,0,1));
+                particle.Sprite.Color = Real4(0, 0.5, 1, 1);
+                
+                var explosionVector:Real3 = Math.Normalize(Real3(this.RandomGenerator.Range(-1, 1), this.RandomGenerator.Range(-1, 1), 0))*this.RandomGenerator.Range(5, 15);
+                particle.RigidBody.ApplyLinearVelocity(explosionVector);
+            }
+            
+            //shrink player:
+            var player:Cog = event.OtherObject;
+            player.Transform.Scale -= Real3 (0.5, 0.5, 0);
+            //kill player if it's too small
+            if(player.Transform.Scale.X < 1)
+            {
+                player.RemoveComponentByName("Sprite");
+                player.RemoveComponentByName("PlayerControl");
+                player.RemoveComponentByName("BoxCollider");
+                player.FindChildByName("PlayerAnimation").Destroy();
+                player.RigidBody.Static = true;
+                for(var i:Integer = 0; i < 16; i += 1)
+                {
+                    particle = this.Space.CreateAtPosition(Archetype.ExplosionParticle, event.OtherObject.Transform.Translation);
+                    particle.Sprite.Color = Real4(0, 0.5, 1, 1);
+                    
+                    var explosionVector:Real3 = Math.Normalize(Real3(this.RandomGenerator.Range(-1, 1), this.RandomGenerator.Range(-1, 1), 0))*this.RandomGenerator.Range(5, 15);
+                    particle.RigidBody.ApplyLinearVelocity(explosionVector);
+                }
+            }
+            //event.OtherObject.Destroy();
+        }
+    }
+}

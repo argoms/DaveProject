@@ -1,0 +1,42 @@
+class PickupBehavior : ZilchComponent
+{
+    /*
+        pickups grow the player, larger player can take more hits before death
+    */
+    var RandomGenerator:Random = Random();//random number generator
+    function Initialize(init : CogInitializer)
+    {
+        Zero.Connect(this.Space, Events.LogicUpdate, this.OnLogicUpdate);
+        Zero.Connect(this.Owner, Events.CollisionStarted,this.OnCollisionStarted);
+    }
+
+    function OnLogicUpdate(event : UpdateEvent)
+    {
+    }
+    
+    function OnCollisionStarted(event : CollisionEvent)
+    {
+        //Console.WriteLine(event.OtherObject.ArchetypeName);
+        
+        //only does stuff if player is hit:
+        if(event.OtherObject.ArchetypeName == "Player")
+        {
+            //create pickup particles:
+            var particle:Cog = null;
+            for(var i:Integer = 0; i < 8; i += 1)
+            {
+                particle = this.Space.CreateAtPosition(Archetype.ExplosionParticle, event.OtherObject.Transform.Translation);
+                particle.Sprite.Color = Real4(0.2, 1, 0, 1);
+                
+                var explosionVector:Real3 = Math.Normalize(Real3(this.RandomGenerator.Range(-1, 1), this.RandomGenerator.Range(-1, 1), 0))*this.RandomGenerator.Range(4, 8);
+                particle.RigidBody.ApplyLinearVelocity(explosionVector);
+            }
+            
+            //grow player:
+            event.OtherObject.Transform.Scale += Real3(0.5,0.5,0);
+            
+            
+            this.Owner.Destroy();
+        }
+    }
+}

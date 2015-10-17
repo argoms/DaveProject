@@ -1,0 +1,47 @@
+/*
+    EnemyHealth
+    @James/Argoms
+    
+    Component managing health points of enemies.
+*/
+class EnemyHealth : ZilchComponent
+{
+    [Property]
+    var Health:Integer = 5; //kills object if health hits 0
+    
+    var RandomGenerator:Random = Random();//random number generator
+    
+    function Initialize(init : CogInitializer)
+    {
+        //Zero.Connect(this.Space, Events.LogicUpdate, this.OnLogicUpdate);
+    }
+
+    function OnLogicUpdate(event : UpdateEvent)
+    {
+    }
+    
+    function TakeDamage(damage : Integer) //called when taking damage
+    {
+        this.Health -= damage;
+        
+        if (this.Health < 1)
+        {
+            this.Die();
+            this.Owner.Destroy();
+        }
+        
+        //Console.WriteLine(this.Health);
+    }
+    
+    function Die()
+    {
+        var particle:Cog = null;
+        for(var i:Integer = 0; i < 8; i += 1)
+        {
+            particle = this.Space.CreateAtPosition(Archetype.ExplosionParticle, this.Owner.Transform.Translation);
+            particle.Sprite.Color = Real4(1, 0, 0, 1);
+            var explosionVector:Real3 = Math.Normalize(Real3(this.RandomGenerator.Range(-1, 1), this.RandomGenerator.Range(-1, 1), 0))*this.RandomGenerator.Range(5, 15);
+            particle.RigidBody.ApplyLinearVelocity(explosionVector);
+        }
+    }
+}

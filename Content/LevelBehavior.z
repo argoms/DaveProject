@@ -1,0 +1,143 @@
+/*
+    LevelBehavior
+    @James/Argoms
+    
+    Spawns enemies, stores the player's active abilities, manages hud somewhat
+*/
+
+class LevelBehavior : ZilchComponent
+{
+    var PlayerCog:Cog; //instance of the player
+    var TimePassed:Real = 0; //time passed since start of level
+    var EnemySpawnCounter:Real = 0.5; //timer for enemy spawning
+    var PickupSpawnCounter:Real = 1.5; //timer for pickup spawning
+    var RandomGenerator:Random = Random();//random number generator
+    
+    var Ability1:Ability;
+    var Ability2:Ability;
+    var Ability3:Ability;
+    
+    function Initialize(init : CogInitializer)
+    {
+        Zero.Connect(this.Space, Events.LogicUpdate, this.OnLogicUpdate);
+        this.PlayerCog = this.Space.CreateAtPosition(Archetype.Player, Real3(0,0,0));
+        var camera = this.Space.CreateAtPosition(Archetype.PlayerCamera, Real3(0,0,40));
+        camera.AttachTo(this.PlayerCog);
+        this.Owner.CameraViewport.Camera = camera;
+       // var enemy:Cog = this.Space.CreateAtPosition(Archetype.BasicEnemy, this.PlayerCog.Transform.Translation + Real3(2,0,0));
+        //enemy.ChaseTarget.Target = this.PlayerCog.Transform;
+        
+        
+        this.Ability1 = Ability(this.RandomGenerator.Range(1, 6) as Integer, 1);
+        this.Ability1.Player = this.PlayerCog;
+        
+        this.Ability2 = Ability(this.RandomGenerator.Range(1, 6) as Integer, 1);
+        this.Ability2.Player = this.PlayerCog;
+        
+        this.Ability3 = Ability(this.RandomGenerator.Range(1, 6) as Integer, 1);
+        this.Ability3.Player = this.PlayerCog;
+    }
+
+    function OnLogicUpdate(event : UpdateEvent)
+    {
+        this.TimePassed += event.Dt;
+        this.EnemySpawnCounter += event.Dt;
+        if(this.EnemySpawnCounter > 1)
+        {
+            this.EnemySpawnCounter = 0;
+            
+            
+            var success:Boolean = false;
+            
+            while(!success)
+            {
+                var spawnPosition:Real3 = Real3(this.RandomGenerator.Range(-16, 16), this.RandomGenerator.Range(-16, 16), 0); //gets a random position within the map
+                
+                //Console.WriteLine(this.RandomGenerator.Range(-5, 5));
+                if(this.DistanceBetween(this.PlayerCog.Transform.Translation, spawnPosition) > (this.PlayerCog.Transform.Scale.X+2)*2) //spawns an enemy if the distance is far enough from the player
+                {
+                    var enemyType = this.RandomGenerator.RangeInclusiveMax(1, 5);
+                    if(enemyType == 5)
+                    {
+                        this.SpawnMissileEnemy(spawnPosition);
+                    } else
+                    {
+                        this.SpawnBasicEnemy(spawnPosition);
+                    }
+                    
+                    success = true;
+                } 
+            }
+            
+        }
+        
+        this.PickupSpawnCounter += event.Dt;
+        if(this.PickupSpawnCounter > 2)
+        {
+            
+            var spawnPosition:Real3 = Real3(this.RandomGenerator.Range(-16, 16), this.RandomGenerator.Range(-16, 16), 0); //gets a random position within the map
+            this.PickupSpawnCounter = 0;
+            if(this.DistanceBetween(this.PlayerCog.Transform.Translation, spawnPosition) > (this.PlayerCog.Transform.Scale.X+2)) //spawns a pickup if the distance is far enough from the player
+            {
+                //this.SpawnPickup(spawnPosition);
+            } 
+            
+        }
+        
+        this.Ability1.Simulate(event.Dt);
+        this.Ability2.Simulate(event.Dt);
+        this.Ability3.Simulate(event.Dt);
+        this.UpdateHUD();
+    }
+    
+    function UpdateHUD()
+    {
+        var ability1Text:Cog = this.PlayerCog.FindChildByName("Ability1Text");
+        var ability2Text:Cog = this.PlayerCog.FindChildByName("Ability2Text");
+        var ability3Text:Cog = this.PlayerCog.FindChildByName("Ability3Text");
+        
+        ability1Text.SpriteText.Text = String.Concatenate(String.Concatenate(this.Ability1.Name, " "), ("`this.Ability1.Power`"));
+        ability2Text.SpriteText.Text = String.Concatenate(String.Concatenate(this.Ability2.Name, " "), ("`this.Ability2.Power`"));
+        ability3Text.SpriteText.Text = String.Concatenate(String.Concatenate(this.Ability3.Name, " "), ("`this.Ability3.Power`"));
+    }
+    
+    function DistanceBetween(obj1:Real3, obj2:Real3):Real //gets the distance between two points, ignoring Z
+    {
+        return Math.Sqrt(Math.Pow((obj1.Y-obj2.Y), 2) + Math.Pow((obj1.Y-obj2.Y), 2));
+    }
+    
+    function SpawnBasicEnemy(position:Real3) //creates a basic enemy that chases the player
+    {
+        var enemy:Cog = this.Space.CreateAtPosition(Archetype.BasicEnemy, position);
+        enemy.ChaseTarget.Target = this.PlayerCog.Transform;
+    }
+    
+    function SpawnMissileEnemy(position:Real3) //creates a basic enemy that chases the player
+    {
+        var enemy:Cog = this.Space.CreateAtPosition(Archetype.MissileEnemy, position);
+        enemy.MissileEnemyBehavior.Target = this.PlayerCog.Transform;
+        enemy.ChaseTarget.Target = this.PlayerCog.Transform;
+    }
+    
+    function SpawnPickup(position:Real3) //creates a pickup that chases the player
+    {
+        var pickup:Cog = this.Space.CreateAtPosition(Archetype.Pickup, position);
+    }
+    
+    function RerollAbility(power : Integer)
+    {
+        if(power == 1)
+        {
+            this.Ability1 = Ability(this.RandomGenerator.Range(1, 6) as Integer, 1);
+            this.Ability1.Player = this.PlayerCog;
+        } else if(power == 2)
+        {
+            this.Ability2 = Ability(this.RandomGenerator.Range(1, 6) as Integer, 1);
+            this.Ability2.Player = this.PlayerCog;
+        } else if(power == 3)
+        {
+            this.Ability3 = Ability(this.RandomGenerator.Range(1, 6) as Integer, 1);
+            this.Ability3.Player = this.PlayerCog;
+        } 
+    }
+}

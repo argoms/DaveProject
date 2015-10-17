@@ -1,0 +1,8 @@
+TextContent = 
+{
+	ZilchScriptBuilder = 
+	{
+		string Name = "PlayerProjectileLogic",
+		uint64 ResourceId = 55c732775f17f938,
+	},
+},

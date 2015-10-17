@@ -1,0 +1,46 @@
+/*
+    ExplosionParticleLogic
+    @James/Argoms
+    
+    Mostly deprecated, just use explosion particles instead.
+    Still semi useful if you want a projectile type to fade out instead of instantly disappearing I guess.
+*/
+class ExplosionParticleLogic : ZilchComponent
+{
+    
+    //note: it's probably less resource intensive to have a single timer that kills all of a group of particles than doing this.
+    //the infrastructure is a bit much for a project I'm abandoning after this though, so forget about optimization for now.
+    var LifeSpan:Real = 1; //number of seconds until the particle kills itself
+    var TimeCounter:Real = 0; 
+    var FadeOut:Boolean = true; //whether or not the particle slowly fades
+    
+    //fadeout calculation variables:
+    var StartingAlpha:Real;
+    var AlphaChange:Real;
+    
+    function Initialize(init : CogInitializer) 
+    {
+        if(this.FadeOut) //calculations for change in transparency
+        {
+            this.StartingAlpha = this.Owner.Sprite.Color.W;
+            this.AlphaChange = this.StartingAlpha/this.LifeSpan;
+        }
+        Zero.Connect(this.Space, Events.LogicUpdate, this.OnLogicUpdate);
+    }
+
+    function OnLogicUpdate(event : UpdateEvent)
+    {
+        if(this.FadeOut) //applies transparency change if relevant
+        {
+            //Console.WriteLine("test");
+            var color = this.Owner.Sprite.Color;
+            this.Owner.Sprite.Color = color - Real4(0, 0, 0, (event.Dt*this.AlphaChange));
+            //Real4(this.Owner.Sprite.Color.W,this.Owner.Sprite.Color.X,this.Owner.Sprite.Color.Y,this.Owner.Sprite.Color.Z-this.AlphaChange);
+        }
+        this.TimeCounter += event.Dt;
+        if(this.TimeCounter > this.LifeSpan)
+        {
+            this.Owner.Destroy();
+        }
+    }
+}
