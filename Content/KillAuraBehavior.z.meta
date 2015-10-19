@@ -1,0 +1,8 @@
+TextContent = 
+{
+	ZilchScriptBuilder = 
+	{
+		string Name = "KillAuraBehavior",
+		uint64 ResourceId = 5672785289cd8c15,
+	},
+},

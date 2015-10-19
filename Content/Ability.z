@@ -54,6 +54,11 @@ class Ability
             this.Name = "Bomb";
             this.Cooldown = 3;
             this.CooldownTimer = 0;
+        } else if(abilityType == 6)
+        {
+            this.Name = "Dash";
+            this.Cooldown = 0.5;
+            this.CooldownTimer = 0;
         }
     }
     
@@ -84,6 +89,9 @@ class Ability
             } else if(this.Type == 5)
             {
                 this.Bomb(this.Power);
+            } else if(this.Type == 6)
+            {
+                this.Dash(this.Power);
             }
         }
     }
@@ -91,7 +99,7 @@ class Ability
     function BasicShoot(power : Real)
     {
         var projectile:Cog = this.Player.Space.CreateAtPosition(Archetype.Bullet, this.Player.Transform.Translation); //create the bullet
-        projectile.PlayerProjectileLogic.Damage = 1+(power as Integer * 3);
+        projectile.PlayerProjectileLogic.Damage = 2+(power as Integer * 3);
         
         //get the direction for the bullet to travel:
         var aim:Real3 = Real3(10, 10, 0);
@@ -173,20 +181,23 @@ class Ability
         projectile.PlayerProjectileLogic.LifeTime = 1;
         projectile.PlayerProjectileLogic.PenetratesTargets = true;
         
-        /*
-        projectile.AddComponentByName("PlayerProjectileExplodeOnDeath");
-        var projectileMod1:PlayerProjectileExplodeOnDeath = projectile.PlayerProjectileExplodeOnDeath;
-        projectileMod1.NumProjectiles = 32;
-        projectileMod1.ProjectileDamage = power as Integer * 2;
-        projectileMod1.Color = Real4(0, 0.5, 1, 0.5);
-        projectileMod1.ExplodeOnCollision = false;
-        projectileMod1.CanPenetrateTargets = true;
-        */
-        
         projectile.AddComponentByName("ExpandObject");
         var explosion = projectile.ExpandObject;
         explosion.Created();
-        Console.WriteLine(projectile.ExpandObject.Timer);
+    }
+    
+    function Dash(power : Real)
+    {
+        var aim:Real3 = Real3(10, 10, 0);
+        var cursor:Real2 = Zero.Mouse.ScreenPosition;
+        var worldCursor:Real3 = this.Player.LevelSettings.CameraViewport.ScreenToWorldZPlane(cursor, 0);
+        aim = Real3(worldCursor.X-this.Player.Transform.Translation.X, worldCursor.Y-this.Player.Transform.Translation.Y, 0)*5;
+        if(this.Vec2Magnitude(aim) > 100)
+        {
+            aim = Math.Normalize(aim) * 10;
+        }
+        this.Player.RigidBody.ApplyLinearVelocity(aim);
+        //Console.WriteLine("aaa");
     }
     
     function Vec2Magnitude(input:Real3):Real //outputs magnitude of a value's X and Y only, SQUARE of the answer, not the actual answer

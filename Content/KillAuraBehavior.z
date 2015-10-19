@@ -1,0 +1,30 @@
+/*
+    KillAuraBehavior
+    @James/Argoms
+    
+    A bit hacky atm, specific behavior for the kill aura. Probably best not to mess with this, will be deprecated pretty soon hopefully.
+*/
+class KillAuraBehavior : ZilchComponent
+{
+    var PassiveAbilityOwner:PassiveAbility;
+    var Power:Integer;
+    var Location:Transform;
+    function Initialize(init : CogInitializer)
+    {
+        Zero.Connect(this.Space, Events.LogicUpdate, this.OnLogicUpdate);
+    }
+
+    function Init()
+    {
+        Zero.Connect(this.Space, Events.LogicUpdate, this.OnLogicUpdate);
+    }
+    function OnLogicUpdate(event : UpdateEvent)
+    {
+        //this.Owner.DebugDraw();
+        this.Owner.Transform.Translation = this.Location.Translation;
+        if(this.PassiveAbilityOwner.Type != 2 || this.PassiveAbilityOwner.Power != this.Power)
+        {
+            this.Owner.Destroy();
+        }
+    }
+}

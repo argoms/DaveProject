@@ -1,0 +1,105 @@
+/*
+    PassiveAbility
+    @James/Argoms
+    
+    Contains passive abilitiy behaviors
+*/
+class PassiveAbility 
+{
+    var Type:Integer; //type of ability
+    var Power:Real;
+    var Name:String;
+    
+    var Player:Cog;
+    
+    var Cooldown:Real;
+    var CooldownTimer:Real;
+    
+    /* Abilities:
+    * 1: afterimage- shoots projectiles in direction player is moving
+    * 2: kill aura- does damage to anything within a certain distance
+    */
+    constructor(abilityType : Integer, abilityStrength : Real)
+    {
+        //Console.WriteLine(a);
+        this.Type = abilityType;
+        this.Power = abilityStrength;
+
+        //set ability info based on input:
+        if(abilityType == 1)
+        {
+            this.Name = "Afterimage";
+            this.Cooldown = 0.1;
+            this.CooldownTimer = 0;
+        } else if(abilityType == 2)
+        {
+            this.Name = "Kill Aura";
+            this.Cooldown = 0.3;
+            this.CooldownTimer = 0;
+        }
+    }
+    
+    function Simulate(dt:Real)
+    {
+        this.CooldownTimer -= dt;
+        this.Fire();
+    }
+    
+    function Fire()
+    {
+        if(this.CooldownTimer <= 0)
+        {
+            this.CooldownTimer = this.Cooldown;
+            
+            //activate according to ability type:
+            if(this.Type == 1)
+            {
+                if(this.Vec2Magnitude(this.Player.RigidBody.Velocity) > 1)
+                {
+                    this.Afterimage(this.Power);
+                }
+            } else if(this.Type == 2)
+            {
+                this.KillAura(this.Power);
+            } 
+        }
+    }
+    
+    function Afterimage(power : Real)
+    {
+        var projectile:Cog = this.Player.Space.CreateAtPosition(Archetype.Bullet, this.Player.Transform.Translation); //create the bullet
+        projectile.PlayerProjectileLogic.Damage = 1+(power as Integer * 1);
+        projectile.Transform.Scale = Real3(1, 1, 1);
+        //var projectile2:Cog = this.Player.Space.CreateAtPosition(Archetype.Bullet, this.Player.Transform.Translation); //create the bullet
+        //projectile2.PlayerProjectileLogic.Damage = 1+(power as Integer * 1);
+        //projectile2.Transform.Scale = Real3(1, 1, 1);
+        
+        //get the direction for the bullet to travel:
+        var aim:Real3 = this.Player.RigidBody.Velocity;
+
+        //applies force in the direction found:
+        projectile.RigidBody.ApplyLinearVelocity(aim*2*power as Integer);
+        //projectile2.RigidBody.ApplyLinearVelocity(aim*-1*power as Integer);
+    }
+    
+    function KillAura(power : Real)
+    {
+        var aura:Cog = this.Player.Space.CreateAtPosition(Archetype.Bullet, this.Player.Transform.Translation);
+        aura.PlayerProjectileLogic.Damage = 1+(power as Integer);
+        aura.Transform.Scale = Real3(1 + power, 1 + power, 1);
+        aura.SphereCollider.Radius = 0.5;
+        aura.PlayerProjectileLogic.PenetratesTargets = true;
+        aura.PlayerProjectileLogic.LifeTime = 0.25;
+        
+        aura.AddComponentByName("KillAuraBehavior");
+        aura.KillAuraBehavior.Power = power as Integer;
+        aura.KillAuraBehavior.PassiveAbilityOwner = this;
+        aura.KillAuraBehavior.Location = this.Player.Transform;
+        aura.KillAuraBehavior.Init();
+    }
+    
+    function Vec2Magnitude(input:Real3):Real //outputs magnitude of a value's X and Y only, SQUARE of the answer, not the actual answer
+    {
+        return (input.X * input.X) + (input.Y * input.Y);
+    }
+}

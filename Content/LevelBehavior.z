@@ -15,7 +15,7 @@ class LevelBehavior : ZilchComponent
     
     var Ability1:Ability;
     var Ability2:Ability;
-    var Ability3:Ability;
+    var Ability3:PassiveAbility;
     
     function Initialize(init : CogInitializer)
     {
@@ -28,13 +28,13 @@ class LevelBehavior : ZilchComponent
         //enemy.ChaseTarget.Target = this.PlayerCog.Transform;
         
         
-        this.Ability1 = Ability(this.RandomGenerator.Range(1, 6) as Integer, 1);
+        this.Ability1 = Ability(this.RandomGenerator.Range(1, 7) as Integer, 1);
         this.Ability1.Player = this.PlayerCog;
         
-        this.Ability2 = Ability(this.RandomGenerator.Range(1, 6) as Integer, 1);
+        this.Ability2 = Ability(this.RandomGenerator.Range(1, 7) as Integer, 1);
         this.Ability2.Player = this.PlayerCog;
         
-        this.Ability3 = Ability(this.RandomGenerator.Range(1, 6) as Integer, 1);
+        this.Ability3 = PassiveAbility(this.RandomGenerator.Range(1, 3) as Integer, 1);
         this.Ability3.Player = this.PlayerCog;
     }
 
@@ -128,15 +128,15 @@ class LevelBehavior : ZilchComponent
     {
         if(power == 1)
         {
-            this.Ability1 = Ability(this.RandomGenerator.Range(1, 6) as Integer, 1);
+            this.Ability1 = Ability(this.RandomGenerator.Range(1, 7) as Integer, 1);
             this.Ability1.Player = this.PlayerCog;
         } else if(power == 2)
         {
-            this.Ability2 = Ability(this.RandomGenerator.Range(1, 6) as Integer, 1);
+            this.Ability2 = Ability(this.RandomGenerator.Range(1, 7) as Integer, 1);
             this.Ability2.Player = this.PlayerCog;
         } else if(power == 3)
         {
-            this.Ability3 = Ability(this.RandomGenerator.Range(1, 6) as Integer, 1);
+            this.Ability3 = PassiveAbility(this.RandomGenerator.Range(1, 3) as Integer, 1);
             this.Ability3.Player = this.PlayerCog;
         } 
     }

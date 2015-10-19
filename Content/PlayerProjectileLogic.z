@@ -46,7 +46,7 @@ class PlayerProjectileLogic : ZilchComponent
             }
         } else {
             this.LifeTime -= event.Dt;
-            if(this.LifeTime < 0)
+            if(this.LifeTime < 0 && this.LifeTime > -5)
             {
                 this.KillSelf(2);
             }
@@ -73,7 +73,7 @@ class PlayerProjectileLogic : ZilchComponent
                     this.KillSelf(1);
                 }
                 
-            } else if(otherObject.Name == "Wall")
+            } else if(otherObject.Name == "Wall" && this.LifeTime > -5)
             {
                 this.KillSelf(1);
             }
