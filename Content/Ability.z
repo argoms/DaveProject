@@ -121,7 +121,7 @@ class Ability
         
         var projectile:Cog = this.Player.Space.CreateAtPosition(Archetype.Bullet, this.Player.Transform.Translation); //create the bullet
         projectile.Transform.Scale = Real3(0.1, 0.1, 3);
-        projectile.PlayerProjectileLogic.Damage = power as Integer;
+        projectile.PlayerProjectileLogic.Damage = power as Integer * 2;
         projectile.PlayerProjectileLogic.LifeTime = 0.25 + this.Vec2Magnitude(Real3(
             worldCursor.X-this.Player.Transform.Translation.X, 
             worldCursor.Y-this.Player.Transform.Translation.Y, 
