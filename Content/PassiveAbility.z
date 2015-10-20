@@ -34,7 +34,7 @@ class PassiveAbility
         } else if(abilityType == 2)
         {
             this.Name = "Kill Aura";
-            this.Cooldown = 2.5;
+            this.Cooldown = 1.1;
             this.CooldownTimer = 0;
         }
     }
@@ -87,11 +87,11 @@ class PassiveAbility
     function KillAura(power : Real)
     {
         var aura:Cog = this.Player.Space.CreateAtPosition(Archetype.Bullet, this.Player.Transform.Translation);
-        aura.PlayerProjectileLogic.Damage = 1+(power as Integer * 2);
+        aura.PlayerProjectileLogic.Damage = 2 + (power as Integer * 3);
         aura.Transform.Scale = Real3(1 + power, 1 + power, 1);
         aura.SphereCollider.Radius = 0.5;
         //aura.PlayerProjectileLogic.PenetratesTargets = true;
-        aura.PlayerProjectileLogic.LifeTime = 2;
+        aura.PlayerProjectileLogic.LifeTime = 1;
         
         aura.AddComponentByName("KillAuraBehavior");
         aura.KillAuraBehavior.Power = power as Integer;
