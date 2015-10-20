@@ -118,7 +118,6 @@ class PlayerControl : ZilchComponent
     
     function UpdateMovement(timePassed:Real)
     {
-        var animation:Sprite = this.Owner.FindChildByName("PlayerAnimation").Sprite;
         var movement:Real3 = Real3(0, 0, 0); //gets movement direction
         if(Zero.Keyboard.KeyIsDown(Keys.A))
         {
@@ -135,16 +134,6 @@ class PlayerControl : ZilchComponent
         if(Zero.Keyboard.KeyIsDown(Keys.S))
         {
             movement += Real3 (0, -1, 0);
-        }
-        
-        //stops player animation if there's no movement, plays if there is:
-        if(Math.Abs(movement.X)+Math.Abs(movement.Y) < 1)
-        {
-            animation.AnimationSpeed = 0;
-            animation.CurrentFrame = 3;
-            
-        } else {
-            animation.AnimationSpeed = 1;
         }
         Math.Normalize(movement); //stops diagonal movement from being faster
         

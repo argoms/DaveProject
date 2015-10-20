@@ -90,6 +90,7 @@ class PlayerProjectileLogic : ZilchComponent
         this.Owner.RigidBody.Velocity = Real3(0, 0, 0);
         this.Owner.SphericalParticleEmitter.Active = false;
         this.Owner.Sprite.Visible = false;
+        this.Owner.FindChildByName("Sprite").Sprite.Visible = false;
         this.TimeCounter = 0.9;
         this.Dead = true;
     }

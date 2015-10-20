@@ -29,12 +29,12 @@ class PassiveAbility
         if(abilityType == 1)
         {
             this.Name = "Afterimage";
-            this.Cooldown = 0.1;
+            this.Cooldown = 0.2;
             this.CooldownTimer = 0;
         } else if(abilityType == 2)
         {
             this.Name = "Kill Aura";
-            this.Cooldown = 0.3;
+            this.Cooldown = 2.5;
             this.CooldownTimer = 0;
         }
     }
@@ -68,8 +68,10 @@ class PassiveAbility
     function Afterimage(power : Real)
     {
         var projectile:Cog = this.Player.Space.CreateAtPosition(Archetype.Bullet, this.Player.Transform.Translation); //create the bullet
-        projectile.PlayerProjectileLogic.Damage = 1+(power as Integer * 1);
+        projectile.PlayerProjectileLogic.Damage = 1+(power as Integer * 2);
         projectile.Transform.Scale = Real3(1, 1, 1);
+        projectile.SphericalParticleEmitter.EmitRate = 10;
+        projectile.FindChildByName("Sprite").Sprite.Color.Z = 0;
         //var projectile2:Cog = this.Player.Space.CreateAtPosition(Archetype.Bullet, this.Player.Transform.Translation); //create the bullet
         //projectile2.PlayerProjectileLogic.Damage = 1+(power as Integer * 1);
         //projectile2.Transform.Scale = Real3(1, 1, 1);
@@ -85,17 +87,19 @@ class PassiveAbility
     function KillAura(power : Real)
     {
         var aura:Cog = this.Player.Space.CreateAtPosition(Archetype.Bullet, this.Player.Transform.Translation);
-        aura.PlayerProjectileLogic.Damage = 1+(power as Integer);
+        aura.PlayerProjectileLogic.Damage = 1+(power as Integer * 2);
         aura.Transform.Scale = Real3(1 + power, 1 + power, 1);
         aura.SphereCollider.Radius = 0.5;
-        aura.PlayerProjectileLogic.PenetratesTargets = true;
-        aura.PlayerProjectileLogic.LifeTime = 0.25;
+        //aura.PlayerProjectileLogic.PenetratesTargets = true;
+        aura.PlayerProjectileLogic.LifeTime = 2;
         
         aura.AddComponentByName("KillAuraBehavior");
         aura.KillAuraBehavior.Power = power as Integer;
         aura.KillAuraBehavior.PassiveAbilityOwner = this;
         aura.KillAuraBehavior.Location = this.Player.Transform;
         aura.KillAuraBehavior.Init();
+        
+        aura.SphericalParticleEmitter.Active = false;
     }
     
     function Vec2Magnitude(input:Real3):Real //outputs magnitude of a value's X and Y only, SQUARE of the answer, not the actual answer

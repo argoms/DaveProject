@@ -15,6 +15,8 @@ class Ability
     var Cooldown:Real;
     var CooldownTimer:Real;
     
+    var RandomGenerator:Random = Random();//random number generator
+    
     /* Abilities:
     * 1: Basic shooting
     * 2: mortar- weak projectile that explodes into lots of little projectiles
@@ -59,6 +61,11 @@ class Ability
             this.Name = "Dash";
             this.Cooldown = 0.5;
             this.CooldownTimer = 0;
+        } else if(abilityType == 7)
+        {
+            this.Name = "Spray";
+            this.Cooldown = 0.1;
+            this.CooldownTimer = 0;
         }
     }
     
@@ -92,6 +99,9 @@ class Ability
             } else if(this.Type == 6)
             {
                 this.Dash(this.Power);
+            } else if(this.Type == 7)
+            {
+                this.RapidShoot(this.Power);
             }
         }
     }
@@ -106,6 +116,23 @@ class Ability
         var cursor:Real2 = Zero.Mouse.ScreenPosition;
         var worldCursor:Real3 = this.Player.LevelSettings.CameraViewport.ScreenToWorldZPlane(cursor, 0);
         aim = Math.Normalize(Real3(worldCursor.X-this.Player.Transform.Translation.X, worldCursor.Y-this.Player.Transform.Translation.Y, 0));
+
+        //applies force in the direction found:
+        projectile.RigidBody.ApplyLinearVelocity(aim*15*this.Power*this.Power);
+    }
+    
+    function RapidShoot(power : Real)
+    {
+        var projectile:Cog = this.Player.Space.CreateAtPosition(Archetype.Bullet, this.Player.Transform.Translation); //create the bullet
+        projectile.PlayerProjectileLogic.Damage = 1+(power as Integer * 1);
+        
+        //get the direction for the bullet to travel:
+        var aim:Real3 = Real3(10, 10, 0);
+        var cursor:Real2 = Zero.Mouse.ScreenPosition;
+        var worldCursor:Real3 = this.Player.LevelSettings.CameraViewport.ScreenToWorldZPlane(cursor, 0);
+        aim = Math.Normalize(Real3(worldCursor.X-this.Player.Transform.Translation.X, worldCursor.Y-this.Player.Transform.Translation.Y, 0))
+        + Real3(this.RandomGenerator.Range(-0.25, 0.25), this.RandomGenerator.Range(-0.25, 0.25), 0);
+        aim = Math.Normalize(aim);
 
         //applies force in the direction found:
         projectile.RigidBody.ApplyLinearVelocity(aim*15*this.Power*this.Power);
@@ -132,7 +159,7 @@ class Ability
         projectileMod1.NumProjectiles = 24;
         projectileMod1.ProjectileDamage = power as Integer * 2;
         projectileMod1.Color = Real4(0, 0.5, 1, 0.5);
-        projectileMod1.ExplodeOnCollision = false;
+        //projectileMod1.ExplodeOnCollision = false;
         
         
 
