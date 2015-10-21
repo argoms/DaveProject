@@ -36,6 +36,11 @@ class PassiveAbility
             this.Name = "Kill Aura";
             this.Cooldown = 1.1;
             this.CooldownTimer = 0;
+        } else if(abilityType == 3)
+        {
+            this.Name = "Caltrops";
+            this.Cooldown = 0.25;
+            this.CooldownTimer = 0;
         }
     }
     
@@ -61,34 +66,42 @@ class PassiveAbility
             } else if(this.Type == 2)
             {
                 this.KillAura(this.Power);
+            } else if(this.Type == 3)
+            {
+                this.Caltrops(this.Power);
             } 
         }
     }
     
     function Afterimage(power : Real)
     {
-        var projectile:Cog = this.Player.Space.CreateAtPosition(Archetype.Bullet, this.Player.Transform.Translation); //create the bullet
-        projectile.PlayerProjectileLogic.Damage = 1+(power as Integer * 2);
-        projectile.Transform.Scale = Real3(1, 1, 1);
+        var damage = 1 + (power as Integer * 2);
+        var projectile:Cog = this.CreateProjectile(damage, Real3(1, 0.5, 0.5), 3, false);
+        
         projectile.SphericalParticleEmitter.EmitRate = 10;
         projectile.FindChildByName("Sprite").Sprite.Color.Z = 0;
-        //var projectile2:Cog = this.Player.Space.CreateAtPosition(Archetype.Bullet, this.Player.Transform.Translation); //create the bullet
-        //projectile2.PlayerProjectileLogic.Damage = 1+(power as Integer * 1);
-        //projectile2.Transform.Scale = Real3(1, 1, 1);
         
         //get the direction for the bullet to travel:
         var aim:Real3 = this.Player.RigidBody.Velocity;
 
         //applies force in the direction found:
         projectile.RigidBody.ApplyLinearVelocity(aim*2*power as Integer);
-        //projectile2.RigidBody.ApplyLinearVelocity(aim*-1*power as Integer);
+    }
+    
+    function Caltrops(power : Real)
+    {
+        var damage = (power as Integer * 2) + 1;
+        var projectile:Cog = this.CreateProjectile(damage, Real3(0.5, 0.5, 0.5), 3, true);
+        
+        projectile.SphericalParticleEmitter.EmitRate = 2;
+        projectile.FindChildByName("Sprite").Sprite.Color.Z = 0;
     }
     
     function KillAura(power : Real)
     {
-        var aura:Cog = this.Player.Space.CreateAtPosition(Archetype.Bullet, this.Player.Transform.Translation);
-        aura.PlayerProjectileLogic.Damage = 2 + (power as Integer * 3);
-        aura.Transform.Scale = Real3(1 + power, 1 + power, 1);
+        var damage =  2 + (power as Integer * 3);
+        var aura:Cog = this.CreateProjectile(damage, Real3(1 + power, 1 + power, 1), 1, false);
+
         aura.SphereCollider.Radius = 0.5;
         //aura.PlayerProjectileLogic.PenetratesTargets = true;
         aura.PlayerProjectileLogic.LifeTime = 1;
@@ -105,5 +118,20 @@ class PassiveAbility
     function Vec2Magnitude(input:Real3):Real //outputs magnitude of a value's X and Y only, SQUARE of the answer, not the actual answer
     {
         return (input.X * input.X) + (input.Y * input.Y);
+    }
+    
+    /*
+    CreateProjectile
+    Creates a projectile at the player's position
+    inputs (in order): damage, scale, lifetime, PenetratesTargets 
+    */    
+    function CreateProjectile(damage : Integer, scale : Real3, lifetime : Real, penetratesTargets : Boolean):Cog
+    {
+        var projectile:Cog = this.Player.Space.CreateAtPosition(Archetype.Bullet, this.Player.Transform.Translation);
+        projectile.Transform.Scale = scale;
+        projectile.PlayerProjectileLogic.Damage = damage;
+        projectile.PlayerProjectileLogic.LifeTime = lifetime;
+        projectile.PlayerProjectileLogic.PenetratesTargets = penetratesTargets;
+        return projectile;
     }
 }
