@@ -1,0 +1,15 @@
+TextContent = 
+{
+	ZilchScriptBuilder = 
+	{
+		string Name = "GunComponent",
+		uint64 ResourceId = 56d6505abc337d05,
+	},
+	ContentTags = 
+	{
+		Array Tags = 
+		[
+			"MattAIContent",
+		],
+	},
+},

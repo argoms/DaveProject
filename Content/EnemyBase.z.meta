@@ -1,0 +1,15 @@
+TextContent = 
+{
+	ZilchScriptBuilder = 
+	{
+		string Name = "EnemyBase",
+		uint64 ResourceId = 56e8ca7cc1d10c6a,
+	},
+	ContentTags = 
+	{
+		Array Tags = 
+		[
+			"MattAIContent",
+		],
+	},
+},

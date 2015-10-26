@@ -1,0 +1,6 @@
+class TargetComponent : ZilchComponent
+{
+    
+    var Target : Transform = null;
+    
+}

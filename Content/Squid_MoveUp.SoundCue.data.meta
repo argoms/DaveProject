@@ -2,9 +2,9 @@ DataContent =
 {
 	DataBuilder = 
 	{
-		string Name = "Player",
-		uint64 ResourceId = 55c73abaac5be9ec,
-		string LoaderType = "Cog",
+		string Name = "Squid_MoveUp",
+		uint64 ResourceId = 56d1a9d9fdef3e16,
+		string LoaderType = "SoundCue",
 		uint Version = 0,
 		bool ShowInEditor = true,
 	},
@@ -12,7 +12,7 @@ DataContent =
 	{
 		Array Tags = 
 		[
-			"PlayerHealth",
+			"MattAIContent",
 		],
 	},
 },

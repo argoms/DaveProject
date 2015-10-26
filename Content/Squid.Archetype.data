@@ -6,15 +6,15 @@ Cog =
 	},
 	Named = 
 	{
-		string Name = "Player",
+		string Name = "Squid",
 	},
 	Archetyped = 
 	{
-		string Name = "55c73abaac5be9ec:Player",
+		string Name = "56d1a6f140db8f21:Squid",
 	},
 	Transform = 
 	{
-		Vec3 Translation = [3.19749308, 1.00313497, 0],
+		Vec3 Translation = [0, 0, 0],
 		Vec3 Scale = [1, 1, 1],
 		Quat Rotation = [0, 0, 0, 1],
 	},
@@ -24,11 +24,11 @@ Cog =
 		bool VisibilityCulling = true,
 		bool VisibilityEvents = true,
 		bool CastShadows = false,
-		Vec4 Color = [0.264999986, 1, 0.338500082, 0.200000003],
+		Vec4 Color = [1, 1, 1, 1],
 		BlendMode BlendMode = Alpha,
 		SpriteGeometryMode GeometryMode = ZPlane,
 		string SpriteLayer = "52ad5fa30d7fcd50:DefaultSpriteLayer",
-		string SpriteSource = "56732ac1c2a65430:Circle64GlowyGreen",
+		string SpriteSource = "5275aa4d802dd6dc:Square",
 		bool RenderMask = false,
 		bool FlipX = false,
 		bool FlipY = false,
@@ -36,21 +36,42 @@ Cog =
 		float AnimationSpeed = 1,
 		uint StartFrame = 0,
 	},
+	Orientation = 
+	{
+		Vec3 GlobalUp = [0, 1, 0],
+		Vec3 UpVector = [0, 1, 0],
+		Vec3 ForwardVector = [1, 0, 0],
+		OrientationBases DefaultBases = ForwardXUpY,
+	},
 	RigidBody = 
 	{
 		bool Static = false,
 		bool Asleep = false,
 		bool Kinematic = false,
 		bool RotationLocked = true,
-		bool Mode2D = true,
+		bool Mode2D = false,
 		bool AllowSleep = true,
 		bool Inherit2DMode = true,
 		Vec3 Velocity = [0, 0, 0],
 		Vec3 AngularVelocity = [0, 0, 0],
 	},
+	SquidBehavior = 
+	{
+		bool UseSound = true,
+		string MoveForwardSound = "56d1a9d9fdef3e16:Squid_MoveUp",
+		string RetreatSound = "56d1a9d9fdeeaa57:Squid_MoveBack",
+		Vec3 TestTargetPosition = [0, 0, 0],
+		float ForwardSpeed = 700,
+		float RetreatSpeed = 1300,
+		float TimeRandomRange = 0.200000003,
+		int NumberOfMissiles = 0,
+		float ChaseDistance = 10,
+		float AttackDistance = 5,
+		float ActionWaitTime = 0.699999988,
+	},
 	IgnoreSpaceEffects = 
 	{
-		bool Drag = true,
+		bool Drag = false,
 		bool Flow = false,
 		bool Force = false,
 		bool Gravity = true,
@@ -63,27 +84,45 @@ Cog =
 		bool PointForce = false,
 		bool Buoyancy = false,
 	},
-	PlayerControl = 
-	{
-		string Bullet = "55a056d3078929b3:Bullet",
-		int MoveSpeed = 1000,
-		int Decel = 500,
-		int ShotSpeed = 50,
-		float FireRate = 0.200000003,
-	},
 	BoxCollider = 
 	{
-		bool Ghost = false,
+		bool Ghost = true,
 		bool SendsMessages = true,
 		bool Seamless = true,
 		string MaterialName = "4de020863e872da8:DefaultPhysicsMaterial",
-		string SerializedGroupName = "4e740859314e5515:DefaultGroup",
+		string SerializedGroupName = "56d03a8ce48dfd02:Enemies",
 		Vec3 Offset = [0, 0, 0],
 		Vec3 Size = [0.5, 0.5, 0.5],
 	},
-	PlayerHealth = 
+	GunComponent = 
 	{
-		float RegenFactor = 0.0500000007,
+		bool UseSound = true,
+		string ShootSound = "56d1a9b6fbe13c65:Laser_Shot",
+		bool AutomaticFire = false,
+		string Bullet = "562747badd10f102:MiniEnemy",
+		float BulletSpeed = 8,
+		float FireRate = 0.100000001,
+		int AmmoClip = 10,
+		float ReloadTime = 5,
+		float FiringError = 0.200000003,
+	},
+	SoundEmitter = 
+	{
+		float Volume = 1,
+		float Pitch = 0,
+		bool Positional = true,
+		int Version = 1,
+	},
+	TargetComponent = 
+	{
+	},
+	EnemyHealth = 
+	{
+		int Health = 3,
+	},
+	AddScore = 
+	{
+		int ScoreValue = 5,
 	},
 	Hierarchy = 
 	{
@@ -95,12 +134,12 @@ Cog =
 			},
 			Named = 
 			{
-				string Name = "Health",
+				string Name = "Forward",
 			},
 			Transform = 
 			{
-				Vec3 Translation = [0.100000001, -0.100000001, 0],
-				Vec3 Scale = [4, 4, 4],
+				Vec3 Translation = [1, 0, 0],
+				Vec3 Scale = [0.5, 0.200000003, 1],
 				Quat Rotation = [0, 0, 0, 1],
 			},
 			Sprite = 
@@ -109,11 +148,11 @@ Cog =
 				bool VisibilityCulling = true,
 				bool VisibilityEvents = true,
 				bool CastShadows = false,
-				Vec4 Color = [3, 3, 3, 1],
+				Vec4 Color = [1, 1, 1, 1],
 				BlendMode BlendMode = Alpha,
 				SpriteGeometryMode GeometryMode = ZPlane,
 				string SpriteLayer = "52ad5fa30d7fcd50:DefaultSpriteLayer",
-				string SpriteSource = "56732ac1c2a73cba:CircleParticle4GlowyWhite",
+				string SpriteSource = "5275aa4d802dd6dc:Square",
 				bool RenderMask = false,
 				bool FlipX = false,
 				bool FlipY = false,

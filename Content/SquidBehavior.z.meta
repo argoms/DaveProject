@@ -1,0 +1,15 @@
+TextContent = 
+{
+	ZilchScriptBuilder = 
+	{
+		string Name = "SquidBehavior",
+		uint64 ResourceId = 56e8cbfef3b28f03,
+	},
+	ContentTags = 
+	{
+		Array Tags = 
+		[
+			"MattAIContent",
+		],
+	},
+},

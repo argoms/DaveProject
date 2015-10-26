@@ -2,8 +2,8 @@ DataContent =
 {
 	DataBuilder = 
 	{
-		string Name = "Player",
-		uint64 ResourceId = 55c73abaac5be9ec,
+		string Name = "Spiralite",
+		uint64 ResourceId = 56d1a6f743314573,
 		string LoaderType = "Cog",
 		uint Version = 0,
 		bool ShowInEditor = true,
@@ -12,7 +12,7 @@ DataContent =
 	{
 		Array Tags = 
 		[
-			"PlayerHealth",
+			"MattAIContent",
 		],
 	},
 },

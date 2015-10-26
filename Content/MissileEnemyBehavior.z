@@ -6,6 +6,19 @@
 */
 class MissileEnemyBehavior : ZilchComponent
 {
+    //MATT
+    
+    [Dependency]
+    var SoundEmitter : SoundEmitter; //Used for sound
+    
+    [Property]
+    var UseSound : Boolean = true; //Switches sound on/off
+    
+    [Property]
+    var ShootSound : SoundCue = null; //Sound made when shooting
+    
+    //END MATT
+    
     [Property]
     var FireRate:Real = 0.1; //time between shots
     
@@ -60,5 +73,11 @@ class MissileEnemyBehavior : ZilchComponent
     {
         var enemy:Cog = this.Space.CreateAtPosition(Archetype.MiniEnemy, this.Owner.Transform.Translation); //spawned missile object
         enemy.ChaseTarget.Target = this.Target;
+        
+        //MATT
+        
+        if (this.UseSound) this.SoundEmitter.PlayCue(this.ShootSound);
+        
+        //END MATT
     }
 }

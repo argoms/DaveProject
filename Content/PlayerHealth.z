@@ -1,0 +1,182 @@
+//Built by Matt Chasengnou
+//
+//Purpose: to manage player health.
+
+class PlayerHealth : ZilchComponent
+{
+    //The visual our health is connected to
+    var HealthDisplay : Sprite = null;
+    
+    //The maximum HP the player has.
+    var MaxHP : Real = 1;
+    
+    //The current HP of the player
+    var CurrentHP : Real;
+    
+    //For the visual representation of HP
+    var RedHP : Real;
+    
+    var GreenHP : Real;
+    
+    var BlueHP : Real;
+    
+    var AlphaHP : Real;
+    
+    //To make the health display flash during critical condition
+    var RNG : Random = Random();
+    
+    //How much Health to recover per second.
+    //Because MaxHP is 1,
+    //Use a value less than 1.
+    [Property]
+    var RegenFactor : Real = 0.5;
+    
+    
+    function Initialize(init : CogInitializer)
+    {
+        Zero.Connect(this.Space, Events.LogicUpdate, this.OnLogicUpdate);
+        
+        Zero.Connect(this.Owner, Events.CollisionStarted, this.OnCollisionStarted);
+        
+        //Get our health display
+        this.HealthDisplay = this.Owner.FindChildByName("Health").Sprite;
+        
+        //Initially max out HP
+        this.CurrentHP = this.MaxHP;
+        
+        //Update our info for the visual
+        this.UpdateHP();
+    }
+
+    function OnLogicUpdate(event : UpdateEvent)
+    {
+        
+        //If  the player is not at max HP, then recover HP
+        if ((this.CurrentHP < this.MaxHP))
+        {
+            this.CurrentHP += event.Dt * this.RegenFactor;
+            
+            if (this.CurrentHP > this.MaxHP)
+            {
+                this.CurrentHP = this.MaxHP;
+            }
+        }
+        
+        //STUFF FOR HP DISPLAY BELOW
+        
+        this.UpdateHP();
+        
+        this.HealthDisplay.Color = Real4(this.RedHP, this.GreenHP, this.BlueHP, this.AlphaHP);
+        
+    }
+    
+    function OnCollisionStarted(event : CollisionEvent)
+    {
+        var other = event.OtherObject;
+        
+        if (other.Collider.CollisionGroup.Name == "Enemies")
+        {
+            this.TakeDamage();
+        }
+    }
+    
+    //Makes the player take damage
+    function TakeDamage()
+    {
+        this.CurrentHP -= 0.01;
+        
+        //Kill the player if no health remains
+        if (this.CurrentHP <= 0)
+        {
+            this.KillPlayer();
+        }
+    }
+    
+    //Updates the information needed for the HP visual
+    function UpdateHP()
+    {
+        //Set the alpha of the display
+        this.AlphaHP = this.CurrentHP;
+        
+        //Set the scale and offset of the display
+        this.HealthDisplay.Owner.Transform.LocalScale = Real3(4, 4, 4);
+        this.HealthDisplay.Owner.Transform.LocalTranslation = Real3(0.1, -0.1, 0);
+        
+        //If we're above half HP, display these color values
+        //if (this.CurrentHP > this.MaxHP / 2)
+        //{
+            this.RedHP = 1.0 - (this.CurrentHP / 2);
+            this.GreenHP = this.RNG.Range(0.5, 1);
+            this.BlueHP = this.CurrentHP;
+            
+            //If we're at max HP, then go to a solid color to indicate max HP
+            if (this.CurrentHP == this.MaxHP)
+            {
+                this.GreenHP = 1.0;
+                
+                //Set the scale and offset of the display
+                this.HealthDisplay.Owner.Transform.LocalScale = Real3(6, 6, 6);
+                this.HealthDisplay.Owner.Transform.LocalTranslation = Real3(0.15, -0.15, 0);
+            }
+            
+            //return;
+        //}
+        
+        //If we're below half HP, display these color values
+        //if (this.CurrentHP <= this.MaxHP / 2)
+        //{
+        //    this.RedHP = 1.0;
+        //    this.GreenHP = 1.0 * this.CurrentHP / this.MaxHP;
+        //    this.BlueHP = 0.0;
+        //}
+        
+        //If we're in critical condition (below 1/4 HP), start flashing the bar
+        if (this.CurrentHP < this.MaxHP / 4)
+        {
+            this.GreenHP = this.RNG.Range(0, 1);
+            this.AlphaHP = 1;
+            
+            this.HealthDisplay.Owner.Transform.LocalScale = Real3(6, 6, 6);
+            this.HealthDisplay.Owner.Transform.LocalTranslation = Real3(0.15, -0.15, 0);
+        }
+    }
+    
+    //James' code put into a function
+    function KillPlayer()
+    {
+        //create death particles:
+            var particle:Cog = null;
+            for(var i:Integer = 0; i < 8; i += 1)
+            {
+                particle = this.Space.CreateAtPosition(Archetype.ExplosionParticle, this.Owner.Transform.Translation+Real3(0,0,1));
+                particle.Sprite.Color = Real4(0, 0.5, 1, 1);
+                
+                var explosionVector:Real3 = Math.Normalize(Real3(this.RNG.Range(-1, 1), this.RNG.Range(-1, 1), 0))*this.RNG.Range(5, 15);
+                particle.RigidBody.ApplyLinearVelocity(explosionVector);
+            }
+            
+            this.Owner.Transform.Scale -= Real3 (0.5, 0.5, 0);
+            //kill player if it's too small
+            if(this.Owner.Transform.Scale.X < 1)
+            {
+                this.Owner.FindChildByName("Health").Sprite.Visible = false;
+                
+                this.Owner.RemoveComponentByName("Sprite");
+                this.Owner.RemoveComponentByName("PlayerControl");
+                this.Owner.RemoveComponentByName("BoxCollider");
+                this.Owner.RigidBody.Static = true;
+                for(var i:Integer = 0; i < 16; i += 1)
+                {
+                    particle = this.Space.CreateAtPosition(Archetype.ExplosionParticle, this.Owner.Transform.Translation);
+                    particle.Sprite.Color = Real4(0, 0.5, 1, 1);
+                    
+                    var explosionVector:Real3 = Math.Normalize(Real3(this.RNG.Range(-1, 1), this.RNG.Range(-1, 1), 0))*this.RNG.Range(5, 15);
+                    particle.RigidBody.ApplyLinearVelocity(explosionVector);
+                }
+                this.Owner.Transform.Scale = Real3 (1, 1, 1);
+            }
+            
+            this.LevelSettings.LevelStateManager.PlayerIsAlive = false;
+    }
+    
+}

@@ -2,9 +2,9 @@ DataContent =
 {
 	DataBuilder = 
 	{
-		string Name = "Player",
-		uint64 ResourceId = 55c73abaac5be9ec,
-		string LoaderType = "Cog",
+		string Name = "Enemies",
+		uint64 ResourceId = 56d03a8ce48dfd02,
+		string LoaderType = "CollisionGroup",
 		uint Version = 0,
 		bool ShowInEditor = true,
 	},

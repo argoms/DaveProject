@@ -1,0 +1,84 @@
+//Written by Matt Chasengnou
+
+class HudInteraction : ZilchComponent
+{
+    //Allows the level settings to interact with the HUD
+    
+    //Depends on the level state manager for information
+    [Dependency]
+    var LevelStateManager : LevelStateManager;
+    
+    //The player so that we can get the player information
+    var Player : Cog = null;
+    
+    //The level manager
+    var LevelManager : LevelStateManager = null;
+    
+    //The Hud element that displays the score
+    var ScoreSprite : SpriteText;
+    
+    //The Hud element that displays the play time
+    var TimeSprite : SpriteText;
+    
+    //For fancy score stuff
+    var DisplayScore : Integer = 0;
+    
+    //To show the player that the game is over
+    var GameOverText : SpriteText = null;
+    var RestartMessage : SpriteText = null;
+    
+    //To access the abilities display
+    var Ability1Display : SpriteText = null;
+    var Ability2Display : SpriteText = null;
+    var Ability3Display : SpriteText = null;
+    
+    // Making this dependency explicit ensure the HudCreator's Initialize function is
+    // called before HudInteraction's Initialize function.
+    [Dependency]
+    var HudCreator: HudCreator;
+    
+    function Initialize(init : CogInitializer)
+    {
+        Zero.Connect(this.Space, Events.LogicUpdate, this.OnLogicUpdate);
+        
+        //Get the ScoreSprite Hud element
+        this.ScoreSprite = this.Owner.HudCreator.HudSpace.FindObjectByName("HudScore").SpriteText;
+        
+        //Get the TimeSprite Hud element
+        this.TimeSprite = this.Owner.HudCreator.HudSpace.FindObjectByName("HudTime").SpriteText;
+        
+        //Get ability display Hud elements
+        this.Ability1Display = this.Owner.HudCreator.HudSpace.FindObjectByName("Ability1Text").SpriteText;
+        this.Ability2Display = this.Owner.HudCreator.HudSpace.FindObjectByName("Ability2Text").SpriteText;
+        this.Ability3Display = this.Owner.HudCreator.HudSpace.FindObjectByName("Ability3Text").SpriteText;
+        
+        //Get game over Hud elements
+        this.GameOverText = this.Owner.HudCreator.HudSpace.FindObjectByName("GameOverText").SpriteText;
+        this.RestartMessage = this.Owner.HudCreator.HudSpace.FindObjectByName("RestartMessage").SpriteText;
+        
+        this.GameOverText.Visible = false;
+        this.RestartMessage.Visible = false;
+    }
+    
+    function OnLogicUpdate(event : UpdateEvent)
+    {
+        if (this.DisplayScore < this.LevelStateManager.Score) this.DisplayScore += 1;
+        this.ScoreSprite.Text = "`this.DisplayScore`";
+        this.TimeSprite.Text = String.FormatC("%.1f", this.LevelStateManager.Time);
+    }
+    
+    function UpdateAbilities(ability1 : String, ability1Pow : Real,
+            ability2 : String, ability2Pow : Real, ability3 : String, ability3Pow : Real)
+    {
+        this.Ability1Display.Text = String.Concatenate(String.Concatenate(ability1, " "), ("`ability1Pow`"));
+        this.Ability2Display.Text = String.Concatenate(String.Concatenate(ability2, " "), ("`ability2Pow`"));
+        this.Ability3Display.Text = String.Concatenate(String.Concatenate(ability3, " "), ("`ability3Pow`"));
+    }
+    
+    function ShowGameOver()
+    {
+        this.GameOverText.Visible = true;
+        this.RestartMessage.Visible = true;
+    }
+    
+}

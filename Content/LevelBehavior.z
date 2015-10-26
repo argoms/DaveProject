@@ -17,6 +17,48 @@ class LevelBehavior : ZilchComponent
     var Ability2:Ability;
     var Ability3:PassiveAbility;
     
+    
+    //Stuff for the enemy spawner
+    
+    //List of enemies to spawn
+    var EnemyList : Array[Archetype] = Array[Archetype]();
+    
+    //Enemy to put into list
+    [Property]
+    var Enemy1 : Archetype = null;
+    
+    //Number of entries to put into the list
+    //for given enemy.
+    //Keep at 0 if there is no enemy or if you don't want
+    //the enemy to spawn.
+    [Property]
+    var Enemy1SpawnRate : Integer = 0;
+    
+    [Property]
+    var Enemy2 : Archetype = null;
+    
+    [Property]
+    var Enemy2SpawnRate : Integer = 0;
+    
+    [Property]
+    var Enemy3 : Archetype = null;
+    
+    [Property]
+    var Enemy3SpawnRate : Integer = 0;
+    
+    [Property]
+    var Enemy4 : Archetype = null;
+    
+    [Property]
+    var Enemy4SpawnRate : Integer = 0;
+    
+    [Property]
+    var Enemy5 : Archetype = null;
+    
+    [Property]
+    var Enemy5SpawnRate : Integer = 0;
+    
+    
     function Initialize(init : CogInitializer)
     {
         Zero.Connect(this.Space, Events.LogicUpdate, this.OnLogicUpdate);
@@ -36,6 +78,29 @@ class LevelBehavior : ZilchComponent
         
         this.Ability3 = PassiveAbility(this.RandomGenerator.Range(1, 4) as Integer, 1);
         this.Ability3.Player = this.PlayerCog;
+        
+        //Add the enemies to the spawn list
+        for (var i: Integer = 0; i < this.Enemy1SpawnRate; i += 1)
+        {
+            this.EnemyList.Add(this.Enemy1);
+        }
+        for (var i: Integer = 0; i < this.Enemy2SpawnRate; i += 1)
+        {
+            this.EnemyList.Add(this.Enemy2);
+        }
+        for (var i: Integer = 0; i < this.Enemy3SpawnRate; i += 1)
+        {
+            this.EnemyList.Add(this.Enemy3);
+        }
+        for (var i: Integer = 0; i < this.Enemy4SpawnRate; i += 1)
+        {
+            this.EnemyList.Add(this.Enemy4);
+        }
+        for (var i: Integer = 0; i < this.Enemy5SpawnRate; i += 1)
+        {
+            this.EnemyList.Add(this.Enemy5);
+        }
+        
     }
 
     function OnLogicUpdate(event : UpdateEvent)
@@ -56,14 +121,18 @@ class LevelBehavior : ZilchComponent
                 //Console.WriteLine(this.RandomGenerator.Range(-5, 5));
                 if(this.DistanceBetween(this.PlayerCog.Transform.Translation, spawnPosition) > (this.PlayerCog.Transform.Scale.X+2)*2) //spawns an enemy if the distance is far enough from the player
                 {
-                    var enemyType = this.RandomGenerator.RangeInclusiveMax(1, 5);
-                    if(enemyType == 5)
-                    {
-                        this.SpawnMissileEnemy(spawnPosition);
-                    } else
-                    {
-                        this.SpawnBasicEnemy(spawnPosition);
-                    }
+                    //var enemyType = this.RandomGenerator.RangeInclusiveMax(1, 5);
+                    //if(enemyType == 5)
+                    //{
+                    //    this.SpawnMissileEnemy(spawnPosition);
+                    //} else
+                    //{
+                    //    this.SpawnBasicEnemy(spawnPosition);
+                    //}
+                    
+                    var enemyType = this.RandomGenerator.DieRoll(this.EnemyList.Count) - 1;
+                    
+                    this.SpawnEnemy(enemyType, spawnPosition);
                     
                     success = true;
                 } 
@@ -92,13 +161,9 @@ class LevelBehavior : ZilchComponent
     
     function UpdateHUD()
     {
-        var ability1Text:Cog = this.PlayerCog.FindChildByName("Ability1Text");
-        var ability2Text:Cog = this.PlayerCog.FindChildByName("Ability2Text");
-        var ability3Text:Cog = this.PlayerCog.FindChildByName("Ability3Text");
-        
-        ability1Text.SpriteText.Text = String.Concatenate(String.Concatenate(this.Ability1.Name, " "), ("`this.Ability1.Power`"));
-        ability2Text.SpriteText.Text = String.Concatenate(String.Concatenate(this.Ability2.Name, " "), ("`this.Ability2.Power`"));
-        ability3Text.SpriteText.Text = String.Concatenate(String.Concatenate(this.Ability3.Name, " "), ("`this.Ability3.Power`"));
+        this.LevelSettings.HudInteraction.UpdateAbilities(this.Ability1.Name, this.Ability1.Power,
+                        this.Ability2.Name, this.Ability2.Power, this.Ability3.Name, this.Ability3.Power);
+
     }
     
     function DistanceBetween(obj1:Real3, obj2:Real3):Real //gets the distance between two points, ignoring Z
@@ -106,18 +171,31 @@ class LevelBehavior : ZilchComponent
         return Math.Sqrt(Math.Pow((obj1.Y-obj2.Y), 2) + Math.Pow((obj1.Y-obj2.Y), 2));
     }
     
-    function SpawnBasicEnemy(position:Real3) //creates a basic enemy that chases the player
+    //function SpawnBasicEnemy(position:Real3) //creates a basic enemy that chases the player
+    //{
+    //    var enemy:Cog = this.Space.CreateAtPosition(Archetype.BasicEnemy, position);
+    //    enemy.ChaseTarget.Target = this.PlayerCog.Transform;
+    //}
+    
+    //function SpawnMissileEnemy(position:Real3) //creates a basic enemy that chases the player
+    //{
+    //    var enemy:Cog = this.Space.CreateAtPosition(Archetype.MissileEnemy, position);
+    //    enemy.MissileEnemyBehavior.Target = this.PlayerCog.Transform;
+    //    enemy.ChaseTarget.Target = this.PlayerCog.Transform;
+    //}
+    
+    //Spawns an enemy from the enemy list at the given position
+    function SpawnEnemy(enemyIndex : Integer, position : Real3)
     {
-        var enemy:Cog = this.Space.CreateAtPosition(Archetype.BasicEnemy, position);
-        enemy.ChaseTarget.Target = this.PlayerCog.Transform;
+        var enemy:Cog = this.Space.CreateAtPosition(this.EnemyList[enemyIndex], position);
+        
+        if (enemy.ChaseTarget != null) enemy.ChaseTarget.Target = this.PlayerCog.Transform;
+        
+        if (enemy.MissileEnemyBehavior != null) enemy.MissileEnemyBehavior.Target = this.PlayerCog.Transform;
+        
+        if (enemy.TargetComponent != null) enemy.TargetComponent.Target = this.PlayerCog.Transform;
     }
     
-    function SpawnMissileEnemy(position:Real3) //creates a basic enemy that chases the player
-    {
-        var enemy:Cog = this.Space.CreateAtPosition(Archetype.MissileEnemy, position);
-        enemy.MissileEnemyBehavior.Target = this.PlayerCog.Transform;
-        enemy.ChaseTarget.Target = this.PlayerCog.Transform;
-    }
     
     function SpawnPickup(position:Real3) //creates a pickup that chases the player
     {
