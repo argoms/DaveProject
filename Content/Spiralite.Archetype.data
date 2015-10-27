@@ -14,7 +14,7 @@ Cog =
 	},
 	Transform = 
 	{
-		Vec3 Translation = [9.33827305, -8.63616848, 0],
+		Vec3 Translation = [0, 0, 0],
 		Vec3 Scale = [1, 1, 1],
 		Quat Rotation = [0, 0, 0, 1],
 	},
@@ -28,7 +28,7 @@ Cog =
 		BlendMode BlendMode = Alpha,
 		SpriteGeometryMode GeometryMode = ZPlane,
 		string SpriteLayer = "52ad5fa30d7fcd50:DefaultSpriteLayer",
-		string SpriteSource = "5275aa4d802dd6dc:Square",
+		string SpriteSource = "567825ecc3aa3d10:CurvedTriangle64Glowy",
 		bool RenderMask = false,
 		bool FlipX = false,
 		bool FlipY = false,
@@ -137,8 +137,8 @@ Cog =
 			},
 			Transform = 
 			{
-				Vec3 Translation = [50, 0, 0],
-				Vec3 Scale = [100, 0.200000003, 1],
+				Vec3 Translation = [20, 0, 0],
+				Vec3 Scale = [60, 1, 1],
 				Quat Rotation = [0, 0, 0, 1],
 			},
 			Sprite = 
@@ -151,7 +151,7 @@ Cog =
 				BlendMode BlendMode = Alpha,
 				SpriteGeometryMode GeometryMode = ZPlane,
 				string SpriteLayer = "52ad5fa30d7fcd50:DefaultSpriteLayer",
-				string SpriteSource = "5275aa4d802dd6dc:Square",
+				string SpriteSource = "567825ecc3aa7840:SquareGlowy16Solid",
 				bool RenderMask = false,
 				bool FlipX = false,
 				bool FlipY = false,
