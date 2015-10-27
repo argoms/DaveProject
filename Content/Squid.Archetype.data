@@ -49,7 +49,7 @@ Cog =
 		bool Asleep = false,
 		bool Kinematic = false,
 		bool RotationLocked = true,
-		bool Mode2D = false,
+		bool Mode2D = true,
 		bool AllowSleep = true,
 		bool Inherit2DMode = true,
 		Vec3 Velocity = [0, 0, 0],
@@ -61,12 +61,12 @@ Cog =
 		string MoveForwardSound = "56d1a9d9fdef3e16:Squid_MoveUp",
 		string RetreatSound = "56d1a9d9fdeeaa57:Squid_MoveBack",
 		Vec3 TestTargetPosition = [0, 0, 0],
-		float ForwardSpeed = 700,
-		float RetreatSpeed = 1300,
+		float ForwardSpeed = 400,
+		float RetreatSpeed = 800,
 		float TimeRandomRange = 0.200000003,
-		int NumberOfMissiles = 0,
+		int NumberOfMissiles = 1,
 		float ChaseDistance = 10,
-		float AttackDistance = 5,
+		float AttackDistance = 10,
 		float ActionWaitTime = 0.699999988,
 	},
 	IgnoreSpaceEffects = 
@@ -100,9 +100,9 @@ Cog =
 		string ShootSound = "56d1a9b6fbe13c65:Laser_Shot",
 		bool AutomaticFire = false,
 		string Bullet = "562747badd10f102:MiniEnemy",
-		float BulletSpeed = 8,
+		float BulletSpeed = 12,
 		float FireRate = 0.100000001,
-		int AmmoClip = 10,
+		int MagSize = 1,
 		float ReloadTime = 5,
 		float FiringError = 0.200000003,
 	},
@@ -118,7 +118,7 @@ Cog =
 	},
 	EnemyHealth = 
 	{
-		int Health = 3,
+		int Health = 10,
 	},
 	AddScore = 
 	{
