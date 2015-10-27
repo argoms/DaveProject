@@ -14,7 +14,7 @@ Cog =
 	},
 	Transform = 
 	{
-		Vec3 Translation = [3.19749308, 1.00313497, 0],
+		Vec3 Translation = [0, 0, 0],
 		Vec3 Scale = [1, 1, 1],
 		Quat Rotation = [0, 0, 0, 1],
 	},
@@ -66,8 +66,8 @@ Cog =
 	PlayerControl = 
 	{
 		string Bullet = "55a056d3078929b3:Bullet",
-		int MoveSpeed = 1000,
-		int Decel = 500,
+		int MoveSpeed = 500,
+		int Decel = 400,
 		int ShotSpeed = 50,
 		float FireRate = 0.200000003,
 	},
@@ -77,13 +77,13 @@ Cog =
 		bool SendsMessages = true,
 		bool Seamless = true,
 		string MaterialName = "4de020863e872da8:DefaultPhysicsMaterial",
-		string SerializedGroupName = "4e740859314e5515:DefaultGroup",
+		string SerializedGroupName = "567945842ac214cd:Player",
 		Vec3 Offset = [0, 0, 0],
 		Vec3 Size = [0.5, 0.5, 0.5],
 	},
 	PlayerHealth = 
 	{
-		float RegenFactor = 0.0500000007,
+		float RegenFactor = 0.100000001,
 	},
 	Hierarchy = 
 	{

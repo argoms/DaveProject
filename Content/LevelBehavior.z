@@ -140,6 +140,7 @@ class LevelBehavior : ZilchComponent
             
         }
         
+        /*
         this.PickupSpawnCounter += event.Dt;
         if(this.PickupSpawnCounter > 2)
         {
@@ -151,7 +152,7 @@ class LevelBehavior : ZilchComponent
                 //this.SpawnPickup(spawnPosition);
             } 
             
-        }
+        }*/
         
         this.Ability1.Simulate(event.Dt);
         this.Ability2.Simulate(event.Dt);
@@ -189,11 +190,21 @@ class LevelBehavior : ZilchComponent
     {
         var enemy:Cog = this.Space.CreateAtPosition(this.EnemyList[enemyIndex], position);
         
-        if (enemy.ChaseTarget != null) enemy.ChaseTarget.Target = this.PlayerCog.Transform;
         
-        if (enemy.MissileEnemyBehavior != null) enemy.MissileEnemyBehavior.Target = this.PlayerCog.Transform;
+        if (enemy.ChaseTarget != null)
+        {
+            enemy.ChaseTarget.Target = this.PlayerCog.Transform;
+        }
         
-        if (enemy.TargetComponent != null) enemy.TargetComponent.Target = this.PlayerCog.Transform;
+        if (enemy.MissileEnemyBehavior != null) 
+        {
+            enemy.MissileEnemyBehavior.Target = this.PlayerCog.Transform;
+        }
+        
+        if (enemy.TargetComponent != null)
+        {
+            enemy.TargetComponent.Target = this.PlayerCog.Transform;
+        }
     }
     
     

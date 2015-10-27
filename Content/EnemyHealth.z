@@ -11,6 +11,9 @@ class EnemyHealth : ZilchComponent
     
     var RandomGenerator:Random = Random();//random number generator
     
+    //[Property]
+    //var IgnoresProjectiles:Boolean = false; //whether or not object ignores projectiles
+    
     //MATT
     
     [Dependency]
