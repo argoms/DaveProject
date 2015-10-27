@@ -204,15 +204,19 @@ class Ability
     function Bomb(power : Real)
     {
         //create projectile with appropriate damage & attributes:
-        var damage:Integer = power as Integer * 3;
+        var damage:Integer = power as Integer;
         var projectile:Cog = this.CreateProjectile(damage, 
                                                     Real3(1, 1, 1), 
-                                                    1, 
-                                                    true);
+                                                    0, 
+                                                    false);
         
-        projectile.AddComponentByName("ExpandObject");
-        var explosion = projectile.ExpandObject;
-        explosion.Created();
+        projectile.AddComponentByName("PlayerProjectileExplodeOnDeath");
+        var projectileMod1:PlayerProjectileExplodeOnDeath = projectile.PlayerProjectileExplodeOnDeath;
+        projectileMod1.NumProjectiles = 16;
+        projectileMod1.ProjectileDamage = power as Integer * 2 + 2;
+        projectileMod1.Color = Real4(0, 0.5, 1, 0.5);
+        projectileMod1.ProjectilesPenetrate = true;
+        projectileMod1.ExplosionSpeed = 10;
     }
     
     function Dash(power : Real)
