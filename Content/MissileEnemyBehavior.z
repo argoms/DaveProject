@@ -50,6 +50,7 @@ class MissileEnemyBehavior : ZilchComponent
             if(this.TimeCounter > this.TimeBetweenVolleys)
             {
                 this.Shooting = true;
+                this.Owner.ChaseTarget.Disabled = true;
             }
         } else {
             if(this.TimeCounter > this.FireRate)
@@ -62,6 +63,7 @@ class MissileEnemyBehavior : ZilchComponent
                 //stop shooting if volley completed:
                 if(this.ShotCounter == this.ShotsPerVolley)
                 {
+                    this.Owner.ChaseTarget.Disabled = false;
                     this.Shooting = false;
                     this.ShotCounter = 0;
                 }

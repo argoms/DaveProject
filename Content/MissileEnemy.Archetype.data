@@ -68,7 +68,7 @@ Cog =
 		int MoveSpeed = 100,
 		int Decel = 200,
 		bool Disabled = false,
-		float MinDistance = 20,
+		float MinDistance = 10,
 		bool Zombie = false,
 	},
 	BoxCollider = 
