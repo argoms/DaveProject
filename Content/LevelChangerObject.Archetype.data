@@ -6,11 +6,7 @@ Cog =
 	},
 	Named = 
 	{
-		string Name = "Camera",
-	},
-	Archetyped = 
-	{
-		string Name = "55c73e9577a90aff:PlayerCamera",
+		string Name = "LevelChangeObject",
 	},
 	Transform = 
 	{
@@ -18,23 +14,9 @@ Cog =
 		Vec3 Scale = [1, 1, 1],
 		Quat Rotation = [0, 0, 0, 1],
 	},
-	Camera = 
-	{
-		ProjectionMode ProjectionMode = Orthographic,
-		Facing Facing = NegativeZ,
-		CameraTransparentSort TransparentSort = InheritFromSpace,
-		float FieldOfView = 45,
-		float NearPlane = 0.5,
-		float FarPlane = 200,
-		float Size = 20,
-	},
-	SoundListener = 
-	{
-		bool Active = true,
-	},
 	Sprite = 
 	{
-		bool Visible = true,
+		bool Visible = false,
 		bool VisibilityCulling = true,
 		bool VisibilityEvents = true,
 		bool CastShadows = false,
@@ -42,12 +24,17 @@ Cog =
 		BlendMode BlendMode = Alpha,
 		SpriteGeometryMode GeometryMode = ZPlane,
 		string SpriteLayer = "52ad5fa30d7fcd50:DefaultSpriteLayer",
-		string SpriteSource = "5274db4c2e7c11f9:Circle",
+		string SpriteSource = "5275aa4d802dd6dc:Square",
 		bool RenderMask = false,
 		bool FlipX = false,
 		bool FlipY = false,
 		bool AnimationActive = true,
 		float AnimationSpeed = 1,
 		uint StartFrame = 0,
+	},
+	LevelChanger = 
+	{
+		Enum LevelKey = Space,
+		string TargetLevel = "554cea0f94af672f:GameLevel",
 	},
 },

@@ -1,0 +1,42 @@
+//Written by Matt Chasengnou
+
+
+class EnemyBase : ZilchComponent
+{
+    //Base class for enemies
+    //Enemies have timers that can be used to perform actions
+    //at time intervals rather than frame by frame.
+    //The use of the timers is optional, but can provide interesting
+    //AI options if used properly with enemy states
+    
+    //Enemies rely on orientation to get their movement directions
+    [Dependency]
+    var Orientation : Orientation;
+    
+    //Enemies rely on a rigidbody for movement
+    [Dependency]
+    var Rigidbody : RigidBody;
+    
+    //Enemies rely on a target to base their movement on
+    [Dependency]
+    var TargetComponent : TargetComponent;
+    
+    //The time it takes for an enemy to make a decision
+    [Property]
+    var ActionWaitTime : Real = 0.0;
+    
+    //Timer for the action clock
+    var ActionTimer : Real = 0.0;
+    
+    //For randomizing behavior with a die roll
+    var RNG : Random = Random();
+    
+    //To initialize the target after initialization
+    var InitializedTarget : Boolean = false;
+    
+    
+    function Initialize(init : CogInitializer)
+    {
+        
+    }
+}

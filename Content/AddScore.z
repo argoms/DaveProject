@@ -1,0 +1,11 @@
+class AddScore : ZilchComponent
+{
+    //Value to add to score
+    [Property]
+    var ScoreValue : Integer = 1;
+    
+    function AddToScore()
+    {
+        this.LevelSettings.LevelStateManager.UpdateScore(this.ScoreValue);
+    }
+}

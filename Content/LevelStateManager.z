@@ -1,0 +1,57 @@
+class LevelStateManager : ZilchComponent
+{
+    //Title menu
+    [Property]
+    var TitleMenu : Level = null;
+    
+    //The score
+    var Score : Integer = 0;
+    
+    //The time since starting the level
+    var Time : Real = 0.0;
+    
+    //How long to wait after death to say game over
+    var GameOverTime : Real = 3;
+    
+    //clock for game over time
+    var GOClock : Real = 0;
+    
+    //Makes it so that we only send the game over message once
+    var SentGOMessage : Boolean = false;
+    
+    //Sets whether the manager should update.
+    //Is false when player dies.
+    var PlayerIsAlive : Boolean = true;
+    
+    function Initialize(init : CogInitializer)
+    {
+        Zero.Connect(this.Space, Events.LogicUpdate, this.OnLogicUpdate);
+        
+    }
+
+    function OnLogicUpdate(event : UpdateEvent)
+    {
+        //Add to time if updating
+        if (this.PlayerIsAlive) this.Time += event.Dt;
+        
+        else
+        {
+            if (this.GOClock < this.GameOverTime) this.GOClock += event.Dt;
+            if ((this.GOClock >= this.GameOverTime) && !this.SentGOMessage)
+            {
+                this.LevelSettings.HudInteraction.ShowGameOver();
+                this.SentGOMessage = true;
+            }
+            
+            if (Zero.Keyboard.KeyIsPressed(Keys.P)) this.Space.ReloadLevel();
+            
+            if (Zero.Keyboard.KeyIsPressed(Keys.O)) this.Space.LoadLevel(this.TitleMenu);
+        }
+        
+    }
+    
+    function UpdateScore(amount : Integer)
+    {
+        if (this.PlayerIsAlive) this.Score += amount;
+    }
+}

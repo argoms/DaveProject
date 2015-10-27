@@ -42,7 +42,7 @@ Cog =
 		bool Asleep = false,
 		bool Kinematic = false,
 		bool RotationLocked = true,
-		bool Mode2D = true,
+		bool Mode2D = false,
 		bool AllowSleep = true,
 		bool Inherit2DMode = true,
 		Vec3 Velocity = [0, 0, 0],
@@ -77,16 +77,13 @@ Cog =
 		bool SendsMessages = true,
 		bool Seamless = true,
 		string MaterialName = "4de020863e872da8:DefaultPhysicsMaterial",
-		string SerializedGroupName = "4e740859314e5515:DefaultGroup",
+		string SerializedGroupName = "56d03a8ce48dfd02:Enemies",
 		Vec3 Offset = [0, 0, 0],
 		Vec3 Size = [0.5, 0.5, 0.5],
 	},
 	EnemyHealth = 
 	{
 		int Health = 1,
-	},
-	KillPlayerOnTouch = 
-	{
 	},
 	DragEffect = 
 	{
@@ -101,6 +98,10 @@ Cog =
 	AutoOrientToVelocity = 
 	{
 		float AngleOffset = 90,
+	},
+	AddScore = 
+	{
+		int ScoreValue = 1,
 	},
 	Hierarchy = 
 	{

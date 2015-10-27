@@ -1,0 +1,316 @@
+//Written by Matt Chasengnou
+
+class SpiraliteBehavior : EnemyBase
+{
+    //The spiralite uses the DragEffect to change its movement during attacks
+    [Dependency]
+    var DragEffect : DragEffect;
+    
+    //The spiralite depends on the SoundEmitter to make sounds
+    [Dependency]
+    var SoundEmitter : SoundEmitter;
+    
+    //Player reference for transform information
+    var PlayerTransform : Transform = null;
+    
+    //Switches the sound on/off
+    [Property]
+    var UseSound : Boolean = true;
+    
+    //test target. remove in final build
+    [Property]
+    var TestTarget : Real3 = Real3.Zero;
+    
+    //The sound the spiralite makes when it moves
+    [Property]
+    var MoveSound : SoundCue = null;
+    
+    //The sound the spiralite makes when it charges an attack
+    [Property]
+    var ChargeSound : SoundCue = null;
+    
+    //The sound the spiralite makes when it releases an attack
+    [Property]
+    var AttackSound : SoundCue = null;
+    
+    //The move speed of the spiralite
+    [Property]
+    var MoveSpeed : Real = 0.0;
+    
+    //The amount of variance in the movement of the spiralite
+    //0 has no variance
+    //High values introduce large variances
+    [Property]
+    var MoveRandomRange : Real = 0.0;
+    
+    //The desired distance to track the player from
+    //When the spiralite approaches this distance,
+    //it will enter combat mode
+    [Property]
+    var PlayerTrackingDistance : Real = 0.0;
+    
+    //The distance at which the spiralite will begin to chase the player
+    //Must be greater than PlayerTrackingDistance
+    [Property]
+    var ChaseDistance : Real = 0.0;
+    
+    //The distance at which the spiralite will enter combat mode
+    //Must be greater than ChaseDistance
+    [Property]
+    var AttackDistance : Real = 0.0;
+    
+    //Determines the odds against a successful attack decision roll
+    //the odds of a successful attack decision are 1 : OddsAgainstAttack
+    //0 means that the spiralite will always attack
+    //1 gives 1:1 odds or 50% chance of attack
+    //2 gives 1:2 odds or 33% chance of attack
+    //You get the idea
+    [Property]
+    var OddsAgainstAttack : Integer = 1;
+    
+    //Determines how far the range of random values for
+    //the distance tracking will be generated
+    //Must be in the range [0, 1)
+    //Values closer to 1 generate a higher range of random values
+    [Property]
+    var DistanceRandomRange : Real = 0.0;
+    
+    //How fast the spiralite 
+    //[Property]
+    //var AttSpeedModifier : Real = 1.0;
+    
+    //How long it takes the spiralite to charge an attack
+    [Property]
+    var AttChargeTime : Real = 0.0;
+    
+    //Timer for the attack charge
+    var AttTimer : Real = 0.0;
+    
+    //How long the attack remains active
+    [Property]
+    var AttSustainTime : Real = 0.5;
+    
+    //How long it takes for the spiralite's attack to cool down
+    //The spiralite cannot attack again until it cools down
+    [Property]
+    var AttCooldown : Real = 0.0;
+    
+    //Timer for the attack cool down
+    var AttCoolTimer : Real = 0.0;
+    
+    //The attack weapon of the spiralite
+    var AttackSpriteObject : Cog = null;
+    
+    //Determines whether the spiralite will move right or left
+    //Can only be -1 or 1
+    //-1 moves left
+    // 1 moves right
+    //Initialized to move right
+    var Direction : Integer = 1;
+    
+    //Indicates whether or not the spiralite is currently attacking
+    var IsAttacking : Boolean = false;
+    
+    //Indicates whether the attack has been executed
+    var AttackReleased : Boolean = false;
+    
+    function Initialize(init : CogInitializer)
+    {
+        Zero.Connect(this.Space, Events.LogicUpdate, this.OnLogicUpdate);
+        
+        //this.Player = this.Space.FindObjectByName("Player");
+        
+        //Set the direction with a coin toss
+        //If the coin toss is true, flip direction to move left
+        if (this.RNG.CoinFlip())
+        {
+            this.Direction *= -1;
+        }
+        
+        //Randomize the distances from the player that the
+        //spiralite will track movement
+        var randomFactor = this.RNG.Range(1 - this.DistanceRandomRange,
+                                        1 + this.DistanceRandomRange);
+        
+        this.PlayerTrackingDistance *= randomFactor;
+        this.ChaseDistance *= randomFactor;
+        
+        this.DragEffect.Drag = 0;
+        
+        this.AttackSpriteObject = this.Owner.FindChildByName("Beam");
+        
+        this.AttackSpriteObject.Collider.SendsEvents = false;
+        this.AttackSpriteObject.Sprite.Visible = false;
+        
+        this.CancelAttack();
+        
+    }
+    
+    
+    function OnLogicUpdate(event : UpdateEvent)
+    {
+        //"Initialize" the target
+        if (!this.InitializedTarget)
+        {
+            this.PlayerTransform = this.TargetComponent.Target;
+            this.InitializedTarget = true;
+        }
+        
+        
+        if (!this.IsAttacking)
+        {
+            //Set the target to the player's position
+            //DELETE AFTER INTEGRATING WITH MAIN PROJECT
+            this.TestTarget = this.PlayerTransform.WorldTranslation;
+            
+            this.AttCoolTimer -= event.Dt;
+            
+            //if(!this.SoundEmitter.IsPlaying() && this.MoveSound != null)
+            //{
+            //    this.SoundEmitter.Stop();
+            //    this.SoundEmitter.PlayCue(this.MoveSound);
+            //}
+        }
+        
+        this.ActionTimer -= event.Dt;
+        
+        //Initialize the movement vector with the left/right direction vector
+        var movementVector : Real3 = this.Orientation.WorldRight * this.Direction;        
+        
+        
+        //Look at the target
+        this.Orientation.LookAtPoint(this.TestTarget);
+        
+        //Get the distance between the spiralite and player
+        var xDistance : Real = this.Owner.Transform.WorldTranslation.X
+                                - this.TestTarget.X;
+                                
+        var yDistance : Real = this.Owner.Transform.WorldTranslation.Y
+                                - this.TestTarget.Y;
+                                
+        var distanceFromPlayer : Real = Math.Sqrt((xDistance * xDistance)
+                                + (yDistance * yDistance));
+        
+        //Stuff to do if the spiralite is not within its desired range
+        if (distanceFromPlayer > this.PlayerTrackingDistance)
+        {
+            var forwardVector : Real3 = this.Orientation.WorldForward;
+            
+            //If far enough to chase, make the forward vector larger
+            if (distanceFromPlayer > this.ChaseDistance)
+            {
+                forwardVector *= this.MoveSpeed / 1.5;
+            }
+            //Otherwise, make the forward vector just large enough
+            //to keep orbiting the player
+            else
+            {
+                //Scaling the vector and applying variance
+                 forwardVector *= this.MoveSpeed / 3 
+                                * this.RNG.Range(-this.MoveRandomRange, this.MoveRandomRange);
+            }
+            //Add the forward vector to the movement vector
+            movementVector += forwardVector;
+        }
+        
+        //If we are close to the player and not attacking, decide if we attack
+        if((distanceFromPlayer <= this.AttackDistance) && !this.IsAttacking)
+        {
+            //If we able to act and are not already attacking,
+            //Determine if we attack with a die roll
+            if ((this.ActionTimer <= 0.0) && (this.AttCoolTimer <= 0)
+            && (this.RNG.DieRoll(this.OddsAgainstAttack + 1) == 1))
+            {
+                //this.IsAttacking = this.RNG.CoinFlip();
+                this.ActionTimer = this.ActionWaitTime;
+                this.AttCoolTimer = this.AttCooldown;
+                
+                this.IsAttacking = true;
+                
+                this.DragEffect.Drag = 2;
+                
+                this.ChargeAttack();
+            }
+        }
+        
+        
+        //Stuff to do if we are attacking
+        if (this.IsAttacking)
+        {
+            //movementVector = Math.Lerp(movementVector, Real3.Zero, 0.1);
+            
+            this.TestTarget = this.Owner.Transform.WorldTranslation
+                            + (distanceFromPlayer * this.Orientation.WorldForward);
+            
+            this.AttTimer += event.Dt;
+            if (this.AttTimer >= this.AttChargeTime)
+            {
+                if(!this.AttackReleased)
+                {
+                    this.ReleaseAttack();
+                    this.AttackReleased = true;
+                }
+                
+                if(this.AttTimer >= this.AttChargeTime + this.AttSustainTime)
+                {
+                    this.DragEffect.Drag = 0;
+                    
+                    this.IsAttacking = false;
+                    this.AttackReleased = false;
+                    this.AttTimer = 0.0;
+                    
+                    this.CancelAttack();
+                }
+                
+            }
+        }
+        
+        //Stuff to do if we are not attacking
+        else
+        {
+            movementVector *= this.MoveSpeed * this.RNG.Range(0, this.MoveRandomRange);
+        }
+        
+        //Move the spiralite
+        this.Rigidbody.ApplyForce(movementVector);
+        
+        
+    }
+    
+    //Makes the Spiralite prepare an attack
+    function ChargeAttack()
+    {
+        //var attackSprite : Sprite = this.Owner.FindChildByName("Forward").Sprite;
+        this.AttackSpriteObject.Sprite.Visible = true;
+        
+        this.AttackSpriteObject.Sprite.Color = Real4(0, 0.9, 1, 1);
+        
+        if (this.UseSound && this.ChargeSound != null)
+        {
+            this.SoundEmitter.PlayCue(this.ChargeSound);
+        }
+    }
+    
+    //Makes the Spiralite release a charged attack
+    function ReleaseAttack()
+    {
+        this.AttackSpriteObject.Sprite.Color = Real4(1, 0, 0, 1);
+        
+        this.AttackSpriteObject.Collider.SendsEvents = true;
+        
+        if (this.UseSound && this.AttackSound != null)
+        {
+            this.SoundEmitter.PlayCue(this.AttackSound);
+        }
+    }
+    
+    //Makes the Spiralite stop attacking
+    function CancelAttack()
+    {
+        //var attackSprite : Sprite = this.Owner.FindChildByName("Forward").Sprite;
+        this.AttackSpriteObject.Sprite.Visible = false;
+        this.AttackSpriteObject.Sprite.Color = Real4(0, 0.9, 1, 1);
+        
+        this.AttackSpriteObject.Collider.SendsEvents = false;
+    }
+}

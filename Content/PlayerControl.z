@@ -28,9 +28,9 @@ class PlayerControl : ZilchComponent
         //var enemy:Cog = this.Space.CreateAtPosition(Archetype.BasicEnemy, this.Owner.Transform.Translation + Real3(2,0,0));
        // enemy.ChaseTarget.Target = this.Owner.Transform;
        
-        this.Owner.FindChildByName("Ability1Text").SpriteText.Color = Real4(0, 1, 1, 1);
-        this.Owner.FindChildByName("Ability2Text").SpriteText.Color = Real4(1, 1, 1, 1);
-        this.Owner.FindChildByName("Ability3Text").SpriteText.Color = Real4(1, 1, 1, 1);
+        //this.Owner.FindChildByName("Ability1Text").SpriteText.Color = Real4(0, 1, 1, 1);
+        //this.Owner.FindChildByName("Ability2Text").SpriteText.Color = Real4(1, 1, 1, 1);
+        //this.Owner.FindChildByName("Ability3Text").SpriteText.Color = Real4(1, 1, 1, 1);
             
             
     }

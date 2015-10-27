@@ -6,15 +6,15 @@ Cog =
 	},
 	Named = 
 	{
-		string Name = "Player",
+		string Name = "Spiralite",
 	},
 	Archetyped = 
 	{
-		string Name = "55c73abaac5be9ec:Player",
+		string Name = "56d1a6f743314573:Spiralite",
 	},
 	Transform = 
 	{
-		Vec3 Translation = [3.19749308, 1.00313497, 0],
+		Vec3 Translation = [9.33827305, -8.63616848, 0],
 		Vec3 Scale = [1, 1, 1],
 		Quat Rotation = [0, 0, 0, 1],
 	},
@@ -24,17 +24,24 @@ Cog =
 		bool VisibilityCulling = true,
 		bool VisibilityEvents = true,
 		bool CastShadows = false,
-		Vec4 Color = [0.264999986, 1, 0.338500082, 0.200000003],
+		Vec4 Color = [1, 0, 0, 1],
 		BlendMode BlendMode = Alpha,
 		SpriteGeometryMode GeometryMode = ZPlane,
 		string SpriteLayer = "52ad5fa30d7fcd50:DefaultSpriteLayer",
-		string SpriteSource = "56732ac1c2a65430:Circle64GlowyGreen",
+		string SpriteSource = "5275aa4d802dd6dc:Square",
 		bool RenderMask = false,
 		bool FlipX = false,
 		bool FlipY = false,
 		bool AnimationActive = true,
 		float AnimationSpeed = 1,
 		uint StartFrame = 0,
+	},
+	Orientation = 
+	{
+		Vec3 GlobalUp = [0, 0, 1],
+		Vec3 UpVector = [0, 0, 1],
+		Vec3 ForwardVector = [1, 0, 0],
+		OrientationBases DefaultBases = ForwardXUpZ,
 	},
 	RigidBody = 
 	{
@@ -50,7 +57,7 @@ Cog =
 	},
 	IgnoreSpaceEffects = 
 	{
-		bool Drag = true,
+		bool Drag = false,
 		bool Flow = false,
 		bool Force = false,
 		bool Gravity = true,
@@ -63,27 +70,58 @@ Cog =
 		bool PointForce = false,
 		bool Buoyancy = false,
 	},
-	PlayerControl = 
+	SpiraliteBehavior = 
 	{
-		string Bullet = "55a056d3078929b3:Bullet",
-		int MoveSpeed = 1000,
-		int Decel = 500,
-		int ShotSpeed = 50,
-		float FireRate = 0.200000003,
+		bool UseSound = true,
+		Vec3 TestTarget = [0, 0, 0],
+		string MoveSound = "4e1bd44008b4dc2a:DefaultCue",
+		string ChargeSound = "56d1adf84f8feeb7:Spiral_Charge1",
+		string AttackSound = "56d1adf84f8f3a7e:Spiral_Attack1",
+		float MoveSpeed = 5,
+		float MoveRandomRange = 5,
+		float PlayerTrackingDistance = 7,
+		float ChaseDistance = 10,
+		float AttackDistance = 15,
+		int OddsAgainstAttack = 19,
+		float DistanceRandomRange = 0,
+		float AttChargeTime = 1.75,
+		float AttSustainTime = 0.699999988,
+		float AttCooldown = 2,
+		float ActionWaitTime = 1,
 	},
 	BoxCollider = 
 	{
-		bool Ghost = false,
+		bool Ghost = true,
 		bool SendsMessages = true,
 		bool Seamless = true,
 		string MaterialName = "4de020863e872da8:DefaultPhysicsMaterial",
-		string SerializedGroupName = "4e740859314e5515:DefaultGroup",
+		string SerializedGroupName = "56d03a8ce48dfd02:Enemies",
 		Vec3 Offset = [0, 0, 0],
 		Vec3 Size = [0.5, 0.5, 0.5],
 	},
-	PlayerHealth = 
+	DragEffect = 
 	{
-		float RegenFactor = 0.0500000007,
+		bool Active = true,
+		bool WakeUpOnChange = true,
+		float Drag = 0,
+	},
+	SoundEmitter = 
+	{
+		float Volume = 1,
+		float Pitch = 0,
+		bool Positional = true,
+		int Version = 1,
+	},
+	TargetComponent = 
+	{
+	},
+	EnemyHealth = 
+	{
+		int Health = 5,
+	},
+	AddScore = 
+	{
+		int ScoreValue = 15,
 	},
 	Hierarchy = 
 	{
@@ -95,12 +133,12 @@ Cog =
 			},
 			Named = 
 			{
-				string Name = "Health",
+				string Name = "Beam",
 			},
 			Transform = 
 			{
-				Vec3 Translation = [0.100000001, -0.100000001, 0],
-				Vec3 Scale = [4, 4, 4],
+				Vec3 Translation = [50, 0, 0],
+				Vec3 Scale = [100, 0.200000003, 1],
 				Quat Rotation = [0, 0, 0, 1],
 			},
 			Sprite = 
@@ -109,17 +147,27 @@ Cog =
 				bool VisibilityCulling = true,
 				bool VisibilityEvents = true,
 				bool CastShadows = false,
-				Vec4 Color = [3, 3, 3, 1],
+				Vec4 Color = [0, 1, 0.940000057, 1],
 				BlendMode BlendMode = Alpha,
 				SpriteGeometryMode GeometryMode = ZPlane,
 				string SpriteLayer = "52ad5fa30d7fcd50:DefaultSpriteLayer",
-				string SpriteSource = "56732ac1c2a73cba:CircleParticle4GlowyWhite",
+				string SpriteSource = "5275aa4d802dd6dc:Square",
 				bool RenderMask = false,
 				bool FlipX = false,
 				bool FlipY = false,
 				bool AnimationActive = true,
 				float AnimationSpeed = 1,
 				uint StartFrame = 0,
+			},
+			BoxCollider = 
+			{
+				bool Ghost = true,
+				bool SendsMessages = true,
+				bool Seamless = true,
+				string MaterialName = "4de020863e872da8:DefaultPhysicsMaterial",
+				string SerializedGroupName = "56d03a8ce48dfd02:Enemies",
+				Vec3 Offset = [0, 0, 0],
+				Vec3 Size = [0.5, 0.5, 0.5],
 			},
 		},
 	},

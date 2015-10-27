@@ -1,0 +1,26 @@
+class DestroyAfterTime : ZilchComponent
+{
+    //Destroys the owner after a set amount of time
+    
+    //How long the object stays alive
+    [Property]
+    var Lifetime : Real = 1;
+    
+    //The timer to count how long the object has to live
+    var Timer : Real = 0;
+    
+    function Initialize(init : CogInitializer)
+    {
+        Zero.Connect(this.Space, Events.LogicUpdate, this.OnLogicUpdate);
+    }
+
+    function OnLogicUpdate(event : UpdateEvent)
+    {
+        this.Timer += event.Dt;
+        
+        if ( this.Timer>= this.Lifetime)
+        {
+            this.Owner.Destroy();
+        }
+    }
+}

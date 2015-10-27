@@ -11,6 +11,13 @@ class EnemyHealth : ZilchComponent
     
     var RandomGenerator:Random = Random();//random number generator
     
+    //MATT
+    
+    [Dependency]
+    var AddScore : AddScore; //Needed to add to score on death
+    
+    //END MATT
+    
     function Initialize(init : CogInitializer)
     {
         //Zero.Connect(this.Space, Events.LogicUpdate, this.OnLogicUpdate);
@@ -28,6 +35,7 @@ class EnemyHealth : ZilchComponent
         {
             this.Die();
             this.Owner.Destroy();
+            this.AddScore.AddToScore();
         }
         
         //Console.WriteLine(this.Health);

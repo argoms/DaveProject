@@ -2,12 +2,12 @@ Cog =
 {
 	Project = 
 	{
-		string ProjectName = "ScriptingLesson",
+		string ProjectName = "DAVE",
 		string ProjectOwner = "",
 		string DefaultLevel = "Level",
 		string ProjectSpace = "Space",
-		string ProjectFolder = "C:\DigiPen\Gam100\DaveProject",
-		uint ProjectEngineRevision = 12259,
+		string ProjectFolder = "C:\Users\Armed_Watcher\DigiPen_GAMES\GAM100\DAVE\0.3.1\DaveProject-e28a8409a358d54c1bcb5accffe6b3d1e63835a2",
+		uint ProjectEngineRevision = 12439,
 		bool AutoTakeProjectScreenshot = true,
 	},
 	EditorSettings = 

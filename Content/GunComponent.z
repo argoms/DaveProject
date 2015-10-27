@@ -1,0 +1,144 @@
+class GunComponent : ZilchComponent
+{
+    //The GunComponent uses the sound emitter to make gun shot sounds
+    [Dependency]
+    var SoundEmitter : SoundEmitter;
+    
+    //Switches the sound on/off
+    [Property]
+    var UseSound : Boolean = true;
+    
+    //The sound the gun makes when shooting
+    [Property]
+    var ShootSound : SoundCue = null;
+    
+    //Whether the weapon is in automatic firing mode or not
+    [Property]
+    var AutomaticFire : Boolean = false;
+    
+    //Bullet to be shot
+    [Property]
+    var Bullet : Archetype = null;
+    
+    //Speed of bullet
+    [Property]
+    var BulletSpeed : Real = 0.0;
+    
+    //Time between shots in seconds
+    [Property]
+    var FireRate : Real = 0.0;
+    
+    //The amount of ammo in a clip
+    [Property]
+    var AmmoClip : Integer = 1;
+    
+    //How long it takes the gun to reload
+    [Property]
+    var ReloadTime : Real = 0.0;
+    
+    //Number of shots fired from the clip
+    //Once equal to the clip size, the gun cannot shoot any more
+    var ShotsFired : Integer = 0;
+    
+    //Degree of error in firing
+    //Enter a value from 0 to 10
+    [Property]
+    var FiringError : Real = 0.0;
+    
+    //Tells the gun whether to shoot or not
+    var IsShooting : Boolean = false;
+    
+    //Used to generate errors in fire accuracy
+    var RNG : Random = Random();
+    
+    //Timer for firing speed
+    var Timer : Real = 0.0;
+    
+    //Where the gun will shoot at
+    var TargetDirection : Real3;
+    
+    function Initialize(init : CogInitializer)
+    {
+        Zero.Connect(this.Space, Events.LogicUpdate, this.OnLogicUpdate);
+        
+        //Initialize timer so that we can fire as soon as the game starts
+        this.Timer = this.FireRate;
+    }
+
+    function OnLogicUpdate(event : UpdateEvent)
+    {
+        
+        //Firing timer stuff
+        this.Timer += event.Dt;
+        
+        if(this.Timer >= this.ReloadTime)
+        {
+            //Reload the gun after enough time passes
+            this.ShotsFired = 0;
+            
+            this.Timer = 0;
+        }
+        
+        else if(this.Timer >= this.FireRate)
+        {
+            //If the gun is supposed to shoot and there is
+            //still ammo, then the gun will shoot
+            if(this.IsShooting && (this.ShotsFired < this.AmmoClip))
+            {
+                //Shoot at the target
+                this.ShootBullet(this.TargetDirection);
+                
+                //Increment the number of shots fired
+                ++this.ShotsFired;
+                
+                if(this.ShotsFired >= this.AmmoClip)
+                {
+                    this.IsShooting = false;
+                }
+                //Reset the timer after firing
+                this.Timer = 0.0;
+            }
+        }
+    }
+    
+    
+    function ShootBullet(direction : Real3)
+    {
+        //Shoots a bullet. Pass in the direction to shoot in as a Real3
+        
+        //Create a bullet
+        var bullet : Cog = this.Space.CreateAtPosition(this.Bullet, this.Owner.Transform.WorldTranslation);
+        
+        //Generate variance for bullet accuracy
+        var angleError : Real3 = Real3(-direction.Y, direction.X, direction.Z)
+                                * this.RNG.Range(-this.FiringError, this.FiringError);
+        
+        //Add error to the velocity vector
+        direction += angleError;
+        
+        var unitScalar = Math.Sqrt(direction.X * direction.X + direction.Y * direction.Y);
+        
+        //Scale the vector so it has a uniform speed
+        direction *= unitScalar * this.BulletSpeed;
+        
+        //Apply Force to bullet
+        bullet.RigidBody.Velocity = direction;
+        
+        if (this.UseSound)
+        {
+        //Make gunshot sound
+        this.SoundEmitter.PlayCue(this.ShootSound);
+        }
+        
+    }
+    
+    function Reload()
+    {
+        //Reload the gun
+        
+        this.ShotsFired = 0;
+        this.IsShooting = false;
+        
+    }
+    
+}

@@ -1,0 +1,15 @@
+TextContent = 
+{
+	ZilchScriptBuilder = 
+	{
+		string Name = "DestroyAfterTime",
+		uint64 ResourceId = 56d1a3671bb2acb5,
+	},
+	ContentTags = 
+	{
+		Array Tags = 
+		[
+			"MattAIContent",
+		],
+	},
+},

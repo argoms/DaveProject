@@ -1,0 +1,218 @@
+class SquidBehavior : EnemyBase
+{
+    //The squid class of enemies
+    
+    //The squid requires a GunComponent in order to shoot
+    [Dependency]
+    var GunComponent : GunComponent;
+    
+    //The squid relies on a SoundEmitter to make sounds
+    [Dependency]
+    var SoundEmitter : SoundEmitter;
+    
+    //the player's transform
+    var PlayerTransform : Transform = null;
+    
+    //Switches the sound on/off
+    [Property]
+    var UseSound : Boolean = true;
+    
+    //The sound made when moving forward
+    [Property]
+    var MoveForwardSound : SoundCue = null;
+    
+    //The sound made when retreating
+    [Property]
+    var RetreatSound : SoundCue = null;
+    
+    //Test target. Will be removed in integrated build
+    [Property]
+    var TestTargetPosition : Real3 = Real3.Zero;
+    
+    //The forward movement speed of the enemy
+    [Property]
+    var ForwardSpeed : Real = 0.0;
+    
+    //How fast the enemy will flee from player
+    [Property]
+    var RetreatSpeed : Real = 0.0;
+    
+    //The variance in the squid's action times
+    [Property]
+    var TimeRandomRange : Real = 0.0;
+    
+    //Number of missiles to shoot at once
+    [Property]
+    var NumberOfMissiles : Integer = 0;
+    
+    //The distance from the player where the squid will begin chase behavior
+    [Property]
+    var ChaseDistance : Real = 0.0;
+    
+    //The distance from the player where the squid will most likely attack
+    [Property]
+    var AttackDistance : Real = 0.0;
+    
+    //Number of faces on the die to use in the roll in attack mode
+    //Landing on 1 or 2 = attack and flee
+    //3 = flee
+    //4 = do nothing
+    var AttackModeDie : Integer = 4;
+    
+    //Number of faces on the die to use in the roll in roaming mode
+    //Landing on 1-3 = move forward
+    //4 = move backward
+    //5 or 6 = do nothing
+    var RoamingDie : Integer = 6;
+    
+    function Initialize(init : CogInitializer)
+    {
+        Zero.Connect(this.Space, Events.LogicUpdate, this.OnLogicUpdate);
+        
+        //GET THE PLAYER'S TRANSFORM INFO FROM THE LEVELSETTINGS
+        
+        
+        //Assuming that whoever is editing will use a positive number
+        //so I will flip the value to a negative one
+        this.RetreatSpeed *= -1;
+        
+        //Adding variance to this enemy's clock
+        this.ActionWaitTime += this.RNG.Range(-this.TimeRandomRange, this.TimeRandomRange);
+        
+        //testing code
+        //this.Player = this.Space.FindObjectByName("Player");
+    }
+
+    function OnLogicUpdate(event : UpdateEvent)
+    {
+        //"Initialize" the target
+        if (!this.InitializedTarget)
+        {
+            this.PlayerTransform = this.TargetComponent.Target;
+            this.InitializedTarget = true;
+        }
+        
+        //The action timer will count down to zero
+        this.ActionTimer -= event.Dt;
+        
+        //Look at the player target
+        this.Orientation.LookAtPoint(this.TestTargetPosition);
+        
+        //Testing code - delete
+        this.TestTargetPosition = this.PlayerTransform.WorldTranslation;
+        
+        //Perform an action when the wait time has passed
+        if (this.ActionTimer <= 0.0)
+        {
+            //Calculate the distance from the player and store it
+            var xDistance : Real = this.Owner.Transform.WorldTranslation.X
+                            - this.TestTargetPosition.X;
+                            
+            var yDistance : Real = this.Owner.Transform.WorldTranslation.Y
+                            - this.TestTargetPosition.Y;
+                            
+            var distanceFromPlayer : Real = Math.Sqrt((xDistance * xDistance)
+                            + (yDistance * yDistance));
+            
+            //If the squid is far from the player, it will move closer
+            if (distanceFromPlayer > this.ChaseDistance)
+            {
+                this.Move(this.ForwardSpeed);
+                this.StopFiring();
+            }
+            //If the squid is close to the player, it may attack, flee, or do nothing
+            else if (distanceFromPlayer < this.AttackDistance)
+            {
+                //Determine what the squid does with a special die roll
+                var dieRoll : Integer = this.RNG.DieRoll(this.AttackModeDie);
+                
+                //Attack branch of the statement
+                if (!this.GunComponent.IsShooting && (dieRoll == 1 || dieRoll == 2))
+                {
+                    this.Shoot();
+                    this.Move(this.RetreatSpeed);
+                }
+                
+                //I might just have two behaviors in this state:
+                //flee, and attack-flee
+                
+                //Flee branch of the statement
+                else// if (dieRoll == 3)
+                {
+                    this.Move(this.RetreatSpeed);
+                    this.StopFiring();
+                }
+                //Do nothing if dieRoll == 4, so I don't need to code anything for that
+            }
+            //If the squid is not too far or too close to the player,
+            //it will move forward, move backward, or do nothing
+            else
+            {
+                 //Determine what the squid does with a die roll
+                var dieRoll : Integer = this.RNG.DieRoll(this.RoamingDie);
+                
+                //Chase branch of the statement
+                if (dieRoll < 4)
+                {
+                    this.Move(this.ForwardSpeed);
+                }
+                //Flee branch of the statement
+                else if (dieRoll == 4)
+                {
+                    this.Move(this.RetreatSpeed);
+                }
+                //Do nothing if dieRoll > 4, so I don't need to code anything for that
+                
+                this.StopFiring();
+            }
+            
+            //Reset the timer
+            this.ActionTimer = this.ActionWaitTime;
+        }
+        
+    }
+    
+    function Move(direction : Real)
+    {
+        //Makes the squid move
+        //Direction dictates whether the squid moves forward or back
+        //Positive Direction moves it forward
+        //Negative Direction moves it back
+        
+        //Move the squid
+        this.Rigidbody.ApplyForce(this.Orientation.WorldForward * direction);
+        
+        //If we are using sound, then do sound stuff
+        if (this.UseSound)
+        {
+            //If moving backwards, play retreating sound
+            if (direction < 0)
+            {
+                this.SoundEmitter.PlayCue(this.RetreatSound);
+            }
+            //Else if we're moving forward, play moving sound
+            else
+            {
+                this.SoundEmitter.PlayCue(this.MoveForwardSound);
+            }
+        }
+        
+    }
+    
+    function Shoot()
+    {
+        //Makes the squid shoot projectiles at the player
+        
+        this.GunComponent.TargetDirection = this.Orientation.WorldForward;
+        this.GunComponent.IsShooting = true;
+    }
+    
+    function StopFiring()
+    {
+        //Stops the squid from shooting
+        
+        this.GunComponent.IsShooting = false;
+        this.GunComponent.Reload();
+    }
+    
+}

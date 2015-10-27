@@ -2,9 +2,9 @@ DataContent =
 {
 	DataBuilder = 
 	{
-		string Name = "Player",
-		uint64 ResourceId = 55c73abaac5be9ec,
-		string LoaderType = "Cog",
+		string Name = "TitleMenu",
+		uint64 ResourceId = 55d8e945c0a27d34,
+		string LoaderType = "Level",
 		uint Version = 0,
 		bool ShowInEditor = true,
 	},
@@ -12,7 +12,7 @@ DataContent =
 	{
 		Array Tags = 
 		[
-			"PlayerHealth",
+			"HUD",
 		],
 	},
 },
