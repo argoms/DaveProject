@@ -43,7 +43,7 @@ class LevelStateManager : ZilchComponent
                 this.SentGOMessage = true;
             }
             
-            if (Zero.Keyboard.KeyIsPressed(Keys.P)) this.Space.ReloadLevel();
+            if (Zero.Keyboard.KeyIsPressed(Keys.R)) this.Space.ReloadLevel();
             
             if (Zero.Keyboard.KeyIsPressed(Keys.O)) this.Space.LoadLevel(this.TitleMenu);
         }

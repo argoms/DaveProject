@@ -67,13 +67,19 @@ class HudInteraction : ZilchComponent
     
     function OnLogicUpdate(event : UpdateEvent)
     {
-        if (this.DisplayScore < this.LevelStateManager.Score) this.DisplayScore += 1;
+        if (this.DisplayScore < this.LevelStateManager.Score) 
+        {
+            this.DisplayScore += 1;
+        }
+        
         this.ScoreSprite.Text = "`this.DisplayScore`";
         this.TimeSprite.Text = String.FormatC("%d", this.Owner.LevelBehavior.WaveNumber);
        
         if(this.Owner.LevelBehavior.PlayerCog.PlayerHealth.CurrentHP > 0)
         {
             this.HealthText.Text = String.FormatC("Health: %.0f",(this.Owner.LevelBehavior.PlayerCog.PlayerHealth.CurrentHP * 100));
+        } else {
+            this.HealthText.Text = "DEAD";
         }
         //this.TimeSprite.Text = String.FormatC("%.1f", this.LevelStateManager.Time);
     }
@@ -99,9 +105,9 @@ class HudInteraction : ZilchComponent
         } else {
             this.Ability3Display.Color = Real4(0, 1, 1, 0.5);
         }
-        this.Ability1Display.Text = String.Concatenate(String.Concatenate(ability1, " "), ("`ability1Pow`"));
-        this.Ability2Display.Text = String.Concatenate(String.Concatenate(ability2, " "), ("`ability2Pow`"));
-        this.Ability3Display.Text = String.Concatenate(String.Concatenate(ability3, " "), ("`ability3Pow`"));
+        this.Ability1Display.Text = String.Concatenate("Ability 1: ", String.Concatenate(String.Concatenate(ability1, " "), ("`ability1Pow`")));
+        this.Ability2Display.Text = String.Concatenate("Ability 2: ", String.Concatenate(String.Concatenate(ability2, " "), ("`ability2Pow`")));
+        this.Ability3Display.Text = String.Concatenate("Ability 3: ", String.Concatenate(String.Concatenate(ability3, " "), ("`ability3Pow`")));
         
     }
     

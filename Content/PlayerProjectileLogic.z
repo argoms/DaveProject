@@ -8,12 +8,15 @@ class PlayerProjectileLogic : ZilchComponent
 {
     var TimeCounter:Real = 0; //used to time particle spawns
     
+    [Property]
     var Damage:Integer = 1;
     
     var Dead:Boolean;
     
+    [Property]
     var LifeTime:Real = 2;
     
+    [Property]
     var PenetratesTargets:Boolean = false;
     
     function Initialize(init : CogInitializer)

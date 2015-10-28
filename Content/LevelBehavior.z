@@ -88,6 +88,7 @@ class LevelBehavior : ZilchComponent
         this.Ability3 = PassiveAbility(this.RandomGenerator.Range(1, 4) as Integer, 1);
         this.Ability3.Player = this.PlayerCog;
         
+        /*
         //Add the enemies to the spawn list
         for (var i: Integer = 0; i < this.Enemy1SpawnRate; i += 1)
         {
@@ -108,7 +109,7 @@ class LevelBehavior : ZilchComponent
         for (var i: Integer = 0; i < this.Enemy5SpawnRate; i += 1)
         {
             this.EnemyList.Add(this.Enemy5);
-        }
+        } */
         
         //first wave stuff:
         var firstWave:EnemyWave = new EnemyWave(1);
@@ -131,7 +132,7 @@ class LevelBehavior : ZilchComponent
         } else if(this.EnemyCounter < 1 && !this.WaveCleared)
         {
             ++this.WaveNumber;
-            if(this.WaveNumber % 3 == 0)
+            if(this.WaveNumber % 2 == 0)
             {
                 ++this.Difficulty;
             }
@@ -252,21 +253,21 @@ class LevelBehavior : ZilchComponent
         {
             if(this.Ability1.MaxLevel == this.Ability1.Power)
             {
-                this.Ability1 = Ability(this.RandomGenerator.Range(1, 8) as Integer, 1);
+                this.Ability1 = Ability(this.RandomGenerator.Range(1, 8) as Integer, this.Difficulty);
                 this.Ability1.Player = this.PlayerCog;
             }
         } else if(power == 2)
         {
             if(this.Ability2.MaxLevel == this.Ability2.Power)
             {
-                this.Ability2 = Ability(this.RandomGenerator.Range(1, 8) as Integer, 1);
+                this.Ability2 = Ability(this.RandomGenerator.Range(1, 8) as Integer, this.Difficulty);
                 this.Ability2.Player = this.PlayerCog;
             }
         } else if(power == 3)
         {
             if(this.Ability3.MaxLevel == this.Ability3.Power)
             {
-                this.Ability3 = PassiveAbility(this.RandomGenerator.Range(1, 4) as Integer, 1);
+                this.Ability3 = PassiveAbility(this.RandomGenerator.Range(1, 4) as Integer, this.Difficulty);
                 this.Ability3.Player = this.PlayerCog;
             }
         } 
