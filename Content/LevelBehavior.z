@@ -58,9 +58,18 @@ class LevelBehavior : ZilchComponent
     [Property]
     var Enemy5SpawnRate : Integer = 0;
     
+    [Property]
+    var MapSize : Real = 38; //size of playable area plus a slight buffer zone
+    
+    var Difficulty : Integer = 1;
+    var WaveNumber : Integer = 1; //current wave number
+    var EnemyCounter : Integer = 0;
+    var WaveCleared : Boolean = false;
+    
     
     function Initialize(init : CogInitializer)
     {
+        
         Zero.Connect(this.Space, Events.LogicUpdate, this.OnLogicUpdate);
         this.PlayerCog = this.Space.CreateAtPosition(Archetype.Player, Real3(0,0,0));
         var camera = this.Space.CreateAtPosition(Archetype.PlayerCamera, Real3(0,0,40));
@@ -101,11 +110,35 @@ class LevelBehavior : ZilchComponent
             this.EnemyList.Add(this.Enemy5);
         }
         
+        //first wave stuff:
+        var firstWave:EnemyWave = new EnemyWave(1);
+        this.SpawnWave(firstWave);
+        this.EnemyCounter += firstWave.EnemyList.Count;
     }
-
+    
     function OnLogicUpdate(event : UpdateEvent)
     {
-        this.TimePassed += event.Dt;
+        if(this.WaveCleared)
+        {
+            this.TimePassed += event.Dt;
+            if(this.TimePassed > 2)
+            {
+                Console.WriteLine("next wave inc");
+                this.TimePassed = 0;
+                this.SpawnNextWave();
+                this.WaveCleared = false;
+            }
+        } else if(this.EnemyCounter < 1 && !this.WaveCleared)
+        {
+            ++this.WaveNumber;
+            if(this.WaveNumber % 3 == 0)
+            {
+                ++this.Difficulty;
+            }
+            this.WaveCleared = true;
+            Console.WriteLine("wave cleared");
+        }
+        /*
         this.EnemySpawnCounter += event.Dt;
         if(this.EnemySpawnCounter > 1)
         {
@@ -138,7 +171,7 @@ class LevelBehavior : ZilchComponent
                 } 
             }
             
-        }
+        }*/
         
         /*
         this.PickupSpawnCounter += event.Dt;
@@ -217,16 +250,82 @@ class LevelBehavior : ZilchComponent
     {
         if(power == 1)
         {
-            this.Ability1 = Ability(this.RandomGenerator.Range(1, 8) as Integer, 1);
-            this.Ability1.Player = this.PlayerCog;
+            if(this.Ability1.MaxLevel == this.Ability1.Power)
+            {
+                this.Ability1 = Ability(this.RandomGenerator.Range(1, 8) as Integer, 1);
+                this.Ability1.Player = this.PlayerCog;
+            }
         } else if(power == 2)
         {
-            this.Ability2 = Ability(this.RandomGenerator.Range(1, 8) as Integer, 1);
-            this.Ability2.Player = this.PlayerCog;
+            if(this.Ability2.MaxLevel == this.Ability2.Power)
+            {
+                this.Ability2 = Ability(this.RandomGenerator.Range(1, 8) as Integer, 1);
+                this.Ability2.Player = this.PlayerCog;
+            }
         } else if(power == 3)
         {
-            this.Ability3 = PassiveAbility(this.RandomGenerator.Range(1, 4) as Integer, 1);
-            this.Ability3.Player = this.PlayerCog;
+            if(this.Ability3.MaxLevel == this.Ability3.Power)
+            {
+                this.Ability3 = PassiveAbility(this.RandomGenerator.Range(1, 4) as Integer, 1);
+                this.Ability3.Player = this.PlayerCog;
+            }
         } 
+    }
+    
+    function SpawnNextWave()
+    {
+        var newWave = new EnemyWave(this.WaveNumber); //something something identities joke
+        this.SpawnWave(newWave);
+        this.EnemyCounter += newWave.EnemyList.Count;
+    }
+    
+    function SpawnWave(wave : EnemyWave)
+    {
+        var position:Real3 = Real3(0, this.MapSize/2, 0);
+        var counter:Integer = 0;
+        var halfMap:Real = this.MapSize / 2;
+        for(var i : Integer = 0; i < wave.EnemyList.Count; ++i)
+        {
+            
+            var enemy:Cog = this.Space.CreateAtPosition(wave.EnemyList[i], position);
+            
+            //adjust relevant components
+            enemy.EnemyHealth.Important = true;
+            
+            if (enemy.ChaseTarget != null)
+            {
+                enemy.ChaseTarget.Target = this.PlayerCog.Transform;
+            }
+
+            if (enemy.MissileEnemyBehavior != null) 
+            {
+                enemy.MissileEnemyBehavior.Target = this.PlayerCog.Transform;
+            }
+
+            if (enemy.TargetComponent != null)
+            {
+                enemy.TargetComponent.Target = this.PlayerCog.Transform;
+            }
+
+            
+            //rotate spawn position going counter clockwise:
+            if(counter == 0)
+            {
+                position = Real3(halfMap, i, 0);
+                ++counter;
+            } else if(counter == 1)
+            {
+                position = Real3(i, -halfMap, 0);
+                ++counter;
+            } else if(counter == 2)
+            {
+                position = Real3(-halfMap, i, 0);
+                ++counter;
+            } else if(counter == 3)
+            {
+                position = Real3(i, halfMap, 0);
+                counter = 0;
+            } 
+        }
     }
 }

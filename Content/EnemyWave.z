@@ -1,0 +1,125 @@
+/*
+    EnemyWave
+    @James/Argoms
+    
+    Information set about a wave of enemies
+*/
+
+
+class EnemyWave
+{
+    var EnemyList:Array[Archetype] = new Array[Archetype](); //list of enemies to spawn
+    
+    //var GameLevel:Level; //level object
+    
+    constructor(levelNumber : Integer)
+    {
+        //this.GameLevel = level;
+        
+        if(levelNumber == 1) //hardcoded level
+        {
+            this.Level1Setup();
+        } else if(levelNumber == 2)
+        {
+            this.Level2Setup();
+        } else if(levelNumber == 3)
+        {
+            this.Level3Setup();
+        } else if(levelNumber == 4)
+        {
+            this.Level4Setup();
+        } else if(levelNumber == 5)
+        {
+            this.Level5Setup();
+        } else {
+            this.GenericLevelSetup();
+        }
+    }
+    
+    function Level1Setup()
+    {
+        
+        this.EnemyList.Push(Archetype.BasicEnemy);
+        this.EnemyList.Push(Archetype.BasicEnemy);
+        this.EnemyList.Push(Archetype.BasicEnemy);
+        this.EnemyList.Push(Archetype.BasicEnemy);
+        
+    }
+    
+    function Level2Setup()
+    {
+        
+        this.EnemyList.Push(Archetype.MissileEnemy);
+        this.EnemyList.Push(Archetype.MissileEnemy);
+        this.EnemyList.Push(Archetype.MissileEnemy);
+        this.EnemyList.Push(Archetype.BasicEnemy);
+        this.EnemyList.Push(Archetype.BasicEnemy);
+    }
+    
+    function Level3Setup()
+    {
+        
+        this.EnemyList.Push(Archetype.Squid);
+        this.EnemyList.Push(Archetype.Squid);
+        this.EnemyList.Push(Archetype.MissileEnemy);
+        this.EnemyList.Push(Archetype.MissileEnemy);
+        this.EnemyList.Push(Archetype.BasicEnemy);
+        this.EnemyList.Push(Archetype.BasicEnemy);
+    }
+    
+    function Level4Setup()
+    {
+        
+        this.EnemyList.Push(Archetype.Squid);
+        this.EnemyList.Push(Archetype.Squid);
+        this.EnemyList.Push(Archetype.Spiralite);
+        this.EnemyList.Push(Archetype.Spiralite);
+        this.EnemyList.Push(Archetype.MissileEnemy);
+        this.EnemyList.Push(Archetype.MissileEnemy);
+        this.EnemyList.Push(Archetype.BasicEnemy);
+        this.EnemyList.Push(Archetype.BasicEnemy);
+    }
+    
+    function Level5Setup()
+    {
+        
+        this.EnemyList.Push(Archetype.Squid);
+        this.EnemyList.Push(Archetype.Squid);
+        this.EnemyList.Push(Archetype.Spiralite);
+        this.EnemyList.Push(Archetype.Spiralite);
+        this.EnemyList.Push(Archetype.MissileEnemy);
+        this.EnemyList.Push(Archetype.MissileEnemy);
+        this.EnemyList.Push(Archetype.BasicEnemy);
+        this.EnemyList.Push(Archetype.MissileEnemy);
+        this.EnemyList.Push(Archetype.MissileEnemy);
+    }
+    
+    function GenericLevelSetup()
+    {
+        
+        this.EnemyList.Push(Archetype.Squid);
+        this.EnemyList.Push(Archetype.Squid);
+        this.EnemyList.Push(Archetype.Spiralite);
+        this.EnemyList.Push(Archetype.Spiralite);
+        this.EnemyList.Push(Archetype.MissileEnemy);
+        this.EnemyList.Push(Archetype.MissileEnemy);
+        this.EnemyList.Push(Archetype.BasicEnemy);
+        this.EnemyList.Push(Archetype.BasicEnemy);
+        this.EnemyList.Push(Archetype.Squid);
+        this.EnemyList.Push(Archetype.Squid);
+        this.EnemyList.Push(Archetype.Spiralite);
+        this.EnemyList.Push(Archetype.Spiralite);
+        this.EnemyList.Push(Archetype.MissileEnemy);
+        this.EnemyList.Push(Archetype.MissileEnemy);
+        this.EnemyList.Push(Archetype.BasicEnemy);
+        this.EnemyList.Push(Archetype.BasicEnemy);
+        this.EnemyList.Push(Archetype.Squid);
+        this.EnemyList.Push(Archetype.Squid);
+        this.EnemyList.Push(Archetype.Spiralite);
+        this.EnemyList.Push(Archetype.Spiralite);
+        this.EnemyList.Push(Archetype.MissileEnemy);
+        this.EnemyList.Push(Archetype.MissileEnemy);
+        this.EnemyList.Push(Archetype.BasicEnemy);
+        this.EnemyList.Push(Archetype.BasicEnemy);
+    }
+}

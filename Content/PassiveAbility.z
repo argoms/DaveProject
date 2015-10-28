@@ -15,6 +15,10 @@ class PassiveAbility
     var Cooldown:Real;
     var CooldownTimer:Real;
     
+    var PowerUpTimer:Real = 0;
+    
+    var MaxLevel:Real;
+        
     /* Abilities:
     * 1: afterimage- shoots projectiles in direction player is moving
     * 2: kill aura- does damage to anything within a certain distance
@@ -23,7 +27,8 @@ class PassiveAbility
     {
         //Console.WriteLine(a);
         this.Type = abilityType;
-        this.Power = abilityStrength;
+        this.Power = 0;
+        this.MaxLevel = abilityStrength;
 
         //set ability info based on input:
         if(abilityType == 1)
@@ -46,6 +51,15 @@ class PassiveAbility
     
     function Simulate(dt:Real)
     {
+        if(this.Power < this.MaxLevel)
+        {
+            this.PowerUpTimer += dt;
+            if(this.PowerUpTimer > 1.5)
+            {
+                ++this.Power;
+                this.PowerUpTimer = 0;
+            }
+        }
         this.CooldownTimer -= dt;
         this.Fire();
     }
@@ -79,8 +93,8 @@ class PassiveAbility
         var projectile:Cog = this.CreateProjectile(damage, Real3(1, 0.5, 0.5), 3, false);
         
         projectile.SphericalParticleEmitter.EmitRate = 10;
-        projectile.FindChildByName("Sprite").Sprite.Color.Z = 0;
-        
+        //projectile.FindChildByName("Sprite").Sprite.Color.Z = 0;
+        projectile.FindChildByName("Sprite").Sprite.Color = Real4(0,1,1,0.25);
         //get the direction for the bullet to travel:
         var aim:Real3 = this.Player.RigidBody.Velocity;
 
@@ -94,7 +108,8 @@ class PassiveAbility
         var projectile:Cog = this.CreateProjectile(damage, Real3(0.5, 0.5, 0.5), 3, true);
         
         projectile.SphericalParticleEmitter.EmitRate = 2;
-        projectile.FindChildByName("Sprite").Sprite.Color.Z = 0;
+        //projectile.FindChildByName("Sprite").Sprite.Color.Z = 0;
+        //projectile.FindChildByName("Sprite").Sprite.Color.W = 0.5;
     }
     
     function KillAura(power : Real)

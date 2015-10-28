@@ -77,7 +77,7 @@ Cog =
 		string MoveSound = "4e1bd44008b4dc2a:DefaultCue",
 		string ChargeSound = "56d1adf84f8feeb7:Spiral_Charge1",
 		string AttackSound = "56d1adf84f8f3a7e:Spiral_Attack1",
-		float MoveSpeed = 5,
+		float MoveSpeed = 1,
 		float MoveRandomRange = 5,
 		float PlayerTrackingDistance = 7,
 		float ChaseDistance = 10,
@@ -150,8 +150,8 @@ Cog =
 			},
 			Transform = 
 			{
-				Vec3 Translation = [20, 0, 0],
-				Vec3 Scale = [60, 0.5, 1],
+				Vec3 Translation = [12.6000004, 0, 0],
+				Vec3 Scale = [2, 1, 1],
 				Quat Rotation = [0, 0, 0, 1],
 			},
 			Sprite = 
@@ -164,7 +164,7 @@ Cog =
 				BlendMode BlendMode = Alpha,
 				SpriteGeometryMode GeometryMode = ZPlane,
 				string SpriteLayer = "52ad5fa30d7fcd50:DefaultSpriteLayer",
-				string SpriteSource = "567825ecc3a862de:Circle16GlowySolid",
+				string SpriteSource = "5666ed8e12e9a0b0:lasertracer",
 				bool RenderMask = false,
 				bool FlipX = false,
 				bool FlipY = false,

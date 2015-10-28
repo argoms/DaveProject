@@ -69,7 +69,7 @@ class PlayerHealth : ZilchComponent
         
         this.HealthDisplay.Color = Real4(this.RedHP, this.GreenHP, this.BlueHP, this.AlphaHP);
         
-        Console.WriteLine(this.CurrentHP);
+        //Console.WriteLine(this.CurrentHP);
         
     }
     

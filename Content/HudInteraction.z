@@ -37,6 +37,8 @@ class HudInteraction : ZilchComponent
     [Dependency]
     var HudCreator: HudCreator;
     
+    var HealthText : SpriteText = null;
+    
     function Initialize(init : CogInitializer)
     {
         Zero.Connect(this.Space, Events.LogicUpdate, this.OnLogicUpdate);
@@ -58,21 +60,49 @@ class HudInteraction : ZilchComponent
         
         this.GameOverText.Visible = false;
         this.RestartMessage.Visible = false;
+        
+        //get health text element
+        this.HealthText = this.Owner.HudCreator.HudSpace.FindObjectByName("HudHealth").SpriteText;
     }
     
     function OnLogicUpdate(event : UpdateEvent)
     {
         if (this.DisplayScore < this.LevelStateManager.Score) this.DisplayScore += 1;
         this.ScoreSprite.Text = "`this.DisplayScore`";
-        this.TimeSprite.Text = String.FormatC("%.1f", this.LevelStateManager.Time);
+        this.TimeSprite.Text = String.FormatC("%d", this.Owner.LevelBehavior.WaveNumber);
+       
+        if(this.Owner.LevelBehavior.PlayerCog.PlayerHealth.CurrentHP > 0)
+        {
+            this.HealthText.Text = String.FormatC("Health: %.0f",(this.Owner.LevelBehavior.PlayerCog.PlayerHealth.CurrentHP * 100));
+        }
+        //this.TimeSprite.Text = String.FormatC("%.1f", this.LevelStateManager.Time);
     }
     
     function UpdateAbilities(ability1 : String, ability1Pow : Real,
             ability2 : String, ability2Pow : Real, ability3 : String, ability3Pow : Real)
     {
+        if(this.Owner.LevelBehavior.Ability1.Power == this.Owner.LevelBehavior.Ability1.MaxLevel)
+        {
+            this.Ability1Display.Color = Real4(0, 1, 1, 1);
+        } else {
+            this.Ability1Display.Color = Real4(0, 1, 1, 0.5);
+        }
+        if(this.Owner.LevelBehavior.Ability2.Power == this.Owner.LevelBehavior.Ability2.MaxLevel)
+        {
+            this.Ability2Display.Color = Real4(0, 1, 1, 1);
+        } else {
+            this.Ability2Display.Color = Real4(0, 1, 1, 0.5);
+        }
+        if(this.Owner.LevelBehavior.Ability3.Power == this.Owner.LevelBehavior.Ability3.MaxLevel)
+        {
+            this.Ability3Display.Color = Real4(0, 1, 1, 1);
+        } else {
+            this.Ability3Display.Color = Real4(0, 1, 1, 0.5);
+        }
         this.Ability1Display.Text = String.Concatenate(String.Concatenate(ability1, " "), ("`ability1Pow`"));
         this.Ability2Display.Text = String.Concatenate(String.Concatenate(ability2, " "), ("`ability2Pow`"));
         this.Ability3Display.Text = String.Concatenate(String.Concatenate(ability3, " "), ("`ability3Pow`"));
+        
     }
     
     function ShowGameOver()
