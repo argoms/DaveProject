@@ -11,7 +11,7 @@ class EnemyHealth : ZilchComponent
     
     var RandomGenerator:Random = Random();//random number generator
     
-    var Important:Boolean = false; //whether or not this enemy adjusts the level's enemy counter
+    var Important:Boolean = true; //whether or not this enemy adjusts the level's enemy counter
     
     //[Property]
     //var IgnoresProjectiles:Boolean = false; //whether or not object ignores projectiles
@@ -49,12 +49,14 @@ class EnemyHealth : ZilchComponent
     
     function Die()
     {
+        //adjust number of enemies left in level:
         if(this.Important)
         {
             --this.Owner.LevelSettings.LevelBehavior.EnemyCounter;
             this.Important = false;
         }
         
+        //explosion:
         var particle:Cog = null;
         for(var i:Integer = 0; i < 8; i += 1)
         {

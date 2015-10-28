@@ -42,7 +42,7 @@ Cog =
 		bool SendsMessages = true,
 		bool Seamless = true,
 		string MaterialName = "4de020863e872da8:DefaultPhysicsMaterial",
-		string SerializedGroupName = "4e740859314e5515:DefaultGroup",
+		string SerializedGroupName = "5666af764f2c85c4:PlayerProjectile",
 		Vec3 Offset = [0, 0, 0],
 		float Radius = 0.25,
 	},
@@ -60,6 +60,9 @@ Cog =
 	},
 	PlayerProjectileLogic = 
 	{
+		int Damage = 1,
+		float LifeTime = 2,
+		bool PenetratesTargets = false,
 	},
 	SpriteParticleSystem = 
 	{

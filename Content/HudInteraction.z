@@ -87,21 +87,40 @@ class HudInteraction : ZilchComponent
     function UpdateAbilities(ability1 : String, ability1Pow : Real,
             ability2 : String, ability2Pow : Real, ability3 : String, ability3Pow : Real)
     {
-        if(this.Owner.LevelBehavior.Ability1.Power == this.Owner.LevelBehavior.Ability1.MaxLevel)
+        if(this.Owner.LevelBehavior.Ability1.Power == this.Owner.LevelBehavior.Ability1.MaxLevel) //checks if the ability is at full power
         {
-            this.Ability1Display.Color = Real4(0, 1, 1, 1);
+            if(this.Owner.LevelBehavior.Ability1.Power == this.Owner.LevelBehavior.Difficulty)
+            {
+                this.Ability1Display.Color = Real4(0, 1, 1, 1); //full strength ability at appropriate difficulty coloring
+            } else {
+                this.Ability1Display.Color = Real4(0, 0.7, 0.7, 1); //ability is slightly faded if its full power is below difficulty
+            }
         } else {
-            this.Ability1Display.Color = Real4(0, 1, 1, 0.5);
+            this.Ability1Display.Color = Real4(0, 1, 1, 0.5); //if not, ability is faded
         }
+        
+        
         if(this.Owner.LevelBehavior.Ability2.Power == this.Owner.LevelBehavior.Ability2.MaxLevel)
         {
-            this.Ability2Display.Color = Real4(0, 1, 1, 1);
+            if(this.Owner.LevelBehavior.Ability2.Power == this.Owner.LevelBehavior.Difficulty)
+            {
+                this.Ability2Display.Color = Real4(0, 1, 1, 1);
+            } else {
+                this.Ability2Display.Color = Real4(0, 0.7, 0.7, 1);
+            }
         } else {
             this.Ability2Display.Color = Real4(0, 1, 1, 0.5);
         }
+        
+        
         if(this.Owner.LevelBehavior.Ability3.Power == this.Owner.LevelBehavior.Ability3.MaxLevel)
         {
-            this.Ability3Display.Color = Real4(0, 1, 1, 1);
+            if(this.Owner.LevelBehavior.Ability3.Power == this.Owner.LevelBehavior.Difficulty)
+            {
+                this.Ability3Display.Color = Real4(0, 1, 1, 1);
+            } else {
+                this.Ability3Display.Color = Real4(0, 0.7, 0.7, 1);
+            }
         } else {
             this.Ability3Display.Color = Real4(0, 1, 1, 0.5);
         }

@@ -119,40 +119,73 @@ class LevelBehavior : ZilchComponent
     
     function OnLogicUpdate(event : UpdateEvent)
     {
+        
+        if(Zero.Keyboard.KeyIsPressed(Keys.L))
+        {
+            ++this.WaveNumber;
+                
+            this.WaveCleared = true;
+            //Console.WriteLine("wave cleared");
+            
+            var text:Cog = this.Owner.HudCreator.HudSpace.CreateAtPosition(Archetype.DamageText, Real3(0,1,1));
+            text.DamageTextBehavior.SetText("Wave Cleared!");
+            text.SpriteText.FontSize = 64;
+            this.TimePassed = 0;
+            if(this.WaveNumber % 2 == 0)
+                {
+                    ++this.Difficulty;
+                    var text2:Cog = this.Owner.HudCreator.HudSpace.CreateAtPosition(Archetype.DamageText, Real3(0,-1,1));
+                    text2.DamageTextBehavior.SetText("Difficulty increased!");
+                    text2.SpriteText.FontSize = 64;
+                }
+        }
+        this.TimePassed += event.Dt;
         if(this.WaveCleared)
         {
-            this.TimePassed += event.Dt;
+            //wave interlude behavior:
+            
             if(this.TimePassed > 5)
             {
+                //spawn text popups:
                 if(this.WaveNumber % 2 == 0)
                 {
                     ++this.Difficulty;
                     var text:Cog = this.Owner.HudCreator.HudSpace.CreateAtPosition(Archetype.DamageText, Real3(0,-1,1));
                     text.DamageTextBehavior.SetText("Difficulty increased!");
                     text.SpriteText.FontSize = 64;
-                    //text.AttachTo(this.PlayerCog);
                 }
-                Console.WriteLine("next wave inc");
+                //Console.WriteLine("next wave inc");
                 var text:Cog = this.Owner.HudCreator.HudSpace.CreateAtPosition(Archetype.DamageText, Real3(0,1,1));
                 text.DamageTextBehavior.SetText("Wave incoming!");
                 text.SpriteText.FontSize = 64;
-                //text.AttachTo(this.PlayerCog);
                 
+                //reset wave info:
                 this.TimePassed = 0;
                 this.SpawnNextWave();
                 this.WaveCleared = false;
             }
-        } else if(this.EnemyCounter < 1 && !this.WaveCleared)
+        } else 
         {
-            ++this.WaveNumber;
-            
-            this.WaveCleared = true;
-            Console.WriteLine("wave cleared");
-            
-            var text:Cog = this.Owner.HudCreator.HudSpace.CreateAtPosition(Archetype.DamageText, Real3(0,1,1));
-            text.DamageTextBehavior.SetText("Wave Cleared!");
-            text.SpriteText.FontSize = 64;
-           // text.AttachTo(this.PlayerCog);
+            //wave clear popup:
+            if(this.EnemyCounter < 1)
+            {
+                ++this.WaveNumber;
+                
+                this.WaveCleared = true;
+                //Console.WriteLine("wave cleared");
+                
+                var text:Cog = this.Owner.HudCreator.HudSpace.CreateAtPosition(Archetype.DamageText, Real3(0,1,1));
+                text.DamageTextBehavior.SetText("Wave Cleared!");
+                text.SpriteText.FontSize = 64;
+                this.TimePassed = 0;
+            }
+        }
+        
+        //checks if the enemy counter has bugged out and everything's dead but it's not registering as next wave:
+        Console.WriteLine(this.Space.FindAllObjectsByName("Enemy").IsNotEmpty);
+        if(!(this.Space.FindAllObjectsByName("Enemy").IsNotEmpty) && !this.WaveCleared && this.TimePassed > 2)
+        {
+            this.EnemyCounter = 0;
         }
         /*
         this.EnemySpawnCounter += event.Dt;
@@ -262,7 +295,7 @@ class LevelBehavior : ZilchComponent
         var pickup:Cog = this.Space.CreateAtPosition(Archetype.Pickup, position);
     }
     
-    function RerollAbility(power : Integer)
+    function RerollAbility(power : Integer) //changes abilities
     {
         if(power == 1)
         {
@@ -288,14 +321,14 @@ class LevelBehavior : ZilchComponent
         } 
     }
     
-    function SpawnNextWave()
+    function SpawnNextWave() //called to the next wave of enemies
     {
         var newWave = new EnemyWave(this.WaveNumber); //something something identities joke
         this.SpawnWave(newWave);
         this.EnemyCounter += newWave.EnemyList.Count;
     }
     
-    function SpawnWave(wave : EnemyWave)
+    function SpawnWave(wave : EnemyWave) //spawns a specific wave of enemies
     {
         var position:Real3 = Real3(0, this.MapSize/2, 0);
         var counter:Integer = 0;
@@ -327,19 +360,19 @@ class LevelBehavior : ZilchComponent
             //rotate spawn position going counter clockwise:
             if(counter == 0)
             {
-                position = Real3(halfMap, i, 0);
+                position = Real3(halfMap, halfMap/2 + i/2, 0);
                 ++counter;
             } else if(counter == 1)
             {
-                position = Real3(i, -halfMap, 0);
+                position = Real3(halfMap/2 + i/2, -halfMap, 0);
                 ++counter;
             } else if(counter == 2)
             {
-                position = Real3(-halfMap, i, 0);
+                position = Real3(-halfMap, halfMap/2 + i/2, 0);
                 ++counter;
             } else if(counter == 3)
             {
-                position = Real3(i, halfMap, 0);
+                position = Real3(halfMap/2 + i/2, halfMap, 0);
                 counter = 0;
             } 
         }

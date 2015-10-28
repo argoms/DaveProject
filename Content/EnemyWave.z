@@ -9,16 +9,17 @@
 class EnemyWave
 {
     var EnemyList:Array[Archetype] = new Array[Archetype](); //list of enemies to spawn
-    
+    var LevelNumber:Integer;
+    var RNG:Random = new Random();
     //var GameLevel:Level; //level object
     
     constructor(levelNumber : Integer)
     {
-        //this.GameLevel = level;
+        this.LevelNumber = levelNumber;
         
-        if(levelNumber == 1) //hardcoded level
+        if(levelNumber == 1) //hardcoded levels:
         {
-            this.Level1Setup();
+            this.Level5Setup();
         } else if(levelNumber == 2)
         {
             this.Level2Setup();
@@ -31,7 +32,10 @@ class EnemyWave
         } else if(levelNumber == 5)
         {
             this.Level5Setup();
-        } else {
+        } else if(levelNumber == 6)
+        {
+            this.Level6Setup();
+        }else { //for the non-hardcoded levels:
             this.GenericLevelSetup();
         }
     }
@@ -52,6 +56,7 @@ class EnemyWave
         this.EnemyList.Push(Archetype.MissileEnemy);
         this.EnemyList.Push(Archetype.MissileEnemy);
         this.EnemyList.Push(Archetype.MissileEnemy);
+        
         this.EnemyList.Push(Archetype.BasicEnemy);
         this.EnemyList.Push(Archetype.BasicEnemy);
     }
@@ -61,8 +66,10 @@ class EnemyWave
         
         this.EnemyList.Push(Archetype.Squid);
         this.EnemyList.Push(Archetype.Squid);
+        
         this.EnemyList.Push(Archetype.MissileEnemy);
         this.EnemyList.Push(Archetype.MissileEnemy);
+        
         this.EnemyList.Push(Archetype.BasicEnemy);
         this.EnemyList.Push(Archetype.BasicEnemy);
     }
@@ -72,10 +79,13 @@ class EnemyWave
         
         this.EnemyList.Push(Archetype.Squid);
         this.EnemyList.Push(Archetype.Squid);
+        
         this.EnemyList.Push(Archetype.Spiralite);
         this.EnemyList.Push(Archetype.Spiralite);
+        
         this.EnemyList.Push(Archetype.MissileEnemy);
         this.EnemyList.Push(Archetype.MissileEnemy);
+        
         this.EnemyList.Push(Archetype.BasicEnemy);
         this.EnemyList.Push(Archetype.BasicEnemy);
     }
@@ -85,41 +95,62 @@ class EnemyWave
         
         this.EnemyList.Push(Archetype.Squid);
         this.EnemyList.Push(Archetype.Squid);
+        
         this.EnemyList.Push(Archetype.Spiralite);
         this.EnemyList.Push(Archetype.Spiralite);
+        
         this.EnemyList.Push(Archetype.MissileEnemy);
         this.EnemyList.Push(Archetype.MissileEnemy);
+        
         this.EnemyList.Push(Archetype.BasicEnemy);
+        
         this.EnemyList.Push(Archetype.MissileEnemy);
         this.EnemyList.Push(Archetype.MissileEnemy);
+        
+        this.EnemyList.Push(Archetype.Spiralite);
+        this.EnemyList.Push(Archetype.Spiralite);
+        this.EnemyList.Push(Archetype.Spiralite);
+        this.EnemyList.Push(Archetype.Spiralite);
+        this.EnemyList.Push(Archetype.Spiralite);
+        this.EnemyList.Push(Archetype.Spiralite);
+    }
+    
+    function Level6Setup()
+    {
+        
+        this.EnemyList.Push(Archetype.GiantSquid);
+        this.EnemyList.Push(Archetype.Squid);
+        this.EnemyList.Push(Archetype.Squid);
     }
     
     function GenericLevelSetup()
     {
         
-        this.EnemyList.Push(Archetype.Squid);
-        this.EnemyList.Push(Archetype.Squid);
-        this.EnemyList.Push(Archetype.Spiralite);
-        this.EnemyList.Push(Archetype.Spiralite);
-        this.EnemyList.Push(Archetype.MissileEnemy);
-        this.EnemyList.Push(Archetype.MissileEnemy);
-        this.EnemyList.Push(Archetype.BasicEnemy);
-        this.EnemyList.Push(Archetype.BasicEnemy);
-        this.EnemyList.Push(Archetype.Squid);
-        this.EnemyList.Push(Archetype.Squid);
-        this.EnemyList.Push(Archetype.Spiralite);
-        this.EnemyList.Push(Archetype.Spiralite);
-        this.EnemyList.Push(Archetype.MissileEnemy);
-        this.EnemyList.Push(Archetype.MissileEnemy);
-        this.EnemyList.Push(Archetype.BasicEnemy);
-        this.EnemyList.Push(Archetype.BasicEnemy);
-        this.EnemyList.Push(Archetype.Squid);
-        this.EnemyList.Push(Archetype.Squid);
-        this.EnemyList.Push(Archetype.Spiralite);
-        this.EnemyList.Push(Archetype.Spiralite);
-        this.EnemyList.Push(Archetype.MissileEnemy);
-        this.EnemyList.Push(Archetype.MissileEnemy);
-        this.EnemyList.Push(Archetype.BasicEnemy);
-        this.EnemyList.Push(Archetype.BasicEnemy);
+        for(var i:Integer = 0; i < 5 + (1.2 * this.LevelNumber); ++i)
+        {
+            var enemyType = this.RNG.DieRoll(4);
+            if(enemyType == 1)
+            {
+                this.EnemyList.Push(Archetype.Squid);
+            } else if(enemyType == 2)
+            {
+                this.EnemyList.Push(Archetype.Spiralite);
+            } else if(enemyType == 3)
+            {
+                this.EnemyList.Push(Archetype.MissileEnemy);
+            } else if(enemyType == 4)
+            {
+                this.EnemyList.Push(Archetype.BasicEnemy);
+            }
+        }
+        
+        if(this.LevelNumber > 7)
+        {
+            this.EnemyList.Push(Archetype.GiantSquid);
+        }
+        if(this.LevelNumber > 8)
+        {
+            this.EnemyList.Push(Archetype.GiantSquid);
+        }
     }
 }

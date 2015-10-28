@@ -388,13 +388,13 @@ Level =
 		},
 		Transform = 
 		{
-			Vec3 Translation = [0, 24, 0],
-			Vec3 Scale = [40, 1, 1],
+			Vec3 Translation = [0, 26, 0],
+			Vec3 Scale = [64, 1, 1],
 			Quat Rotation = [0, 0, 0, 1],
 		},
 		Sprite = 
 		{
-			bool Visible = false,
+			bool Visible = true,
 			bool VisibilityCulling = true,
 			bool VisibilityEvents = true,
 			bool CastShadows = false,
@@ -460,13 +460,13 @@ Level =
 		},
 		Transform = 
 		{
-			Vec3 Translation = [0, -26.4109688, 0],
-			Vec3 Scale = [40, 1, 1],
+			Vec3 Translation = [0, -26, 0],
+			Vec3 Scale = [64, 1, 1],
 			Quat Rotation = [0, 0, 0, 1],
 		},
 		Sprite = 
 		{
-			bool Visible = false,
+			bool Visible = true,
 			bool VisibilityCulling = true,
 			bool VisibilityEvents = true,
 			bool CastShadows = false,
@@ -532,13 +532,13 @@ Level =
 		},
 		Transform = 
 		{
-			Vec3 Translation = [24, 0, 0],
-			Vec3 Scale = [1, 40, 1],
+			Vec3 Translation = [26, 0, 0],
+			Vec3 Scale = [1, 64, 1],
 			Quat Rotation = [0, 0, 0, 1],
 		},
 		Sprite = 
 		{
-			bool Visible = false,
+			bool Visible = true,
 			bool VisibilityCulling = true,
 			bool VisibilityEvents = true,
 			bool CastShadows = false,
@@ -604,13 +604,13 @@ Level =
 		},
 		Transform = 
 		{
-			Vec3 Translation = [-24, 0, 0],
-			Vec3 Scale = [1, 40, 1],
+			Vec3 Translation = [-26, 0, 0],
+			Vec3 Scale = [1, 64, 1],
 			Quat Rotation = [0, 0, 0, 1],
 		},
 		Sprite = 
 		{
-			bool Visible = false,
+			bool Visible = true,
 			bool VisibilityCulling = true,
 			bool VisibilityEvents = true,
 			bool CastShadows = false,

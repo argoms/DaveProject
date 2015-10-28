@@ -50,7 +50,11 @@ class PlayerHealth : ZilchComponent
 
     function OnLogicUpdate(event : UpdateEvent)
     {
-        
+        if(Zero.Keyboard.KeyIsPressed(Keys.G))
+        {
+            this.MaxHP = 90.01;
+            this.RegenFactor = 1000;
+        }
         //If  the player is not at max HP, then recover HP
         if ((this.CurrentHP < this.MaxHP))
         {
