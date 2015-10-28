@@ -19,7 +19,7 @@ class EnemyWave
         
         if(levelNumber == 1) //hardcoded levels:
         {
-            this.Level5Setup();
+            this.Level1Setup();
         } else if(levelNumber == 2)
         {
             this.Level2Setup();
