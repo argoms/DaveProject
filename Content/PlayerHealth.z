@@ -91,6 +91,7 @@ class PlayerHealth : ZilchComponent
         //Kill the player if no health remains
         if (this.CurrentHP <= 0)
         {
+            this.RegenFactor = 0;
             this.KillPlayer();
         }
     }
