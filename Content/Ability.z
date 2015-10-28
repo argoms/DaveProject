@@ -70,7 +70,16 @@ class Ability
         } else if(abilityType == 7)
         {
             this.Name = "Spray";
-            this.Cooldown = 0.1;
+            this.Cooldown = 0.2 - (this.Power as Real)*0.01;
+            if(this.Cooldown < 0.08)
+            {
+                this.Cooldown = 0.08;
+            }
+            this.CooldownTimer = 0;
+        } else if(abilityType == 8)
+        {
+            this.Name = "Shotgun";
+            this.Cooldown = 0.8;
             this.CooldownTimer = 0;
         }
     }
@@ -117,6 +126,9 @@ class Ability
             } else if(this.Type == 7)
             {
                 this.RapidShoot(this.Power);
+            } else if(this.Type == 8)
+            {
+                this.Shotgun(this.Power);
             }
         }
     }
@@ -151,6 +163,27 @@ class Ability
 
         //applies force in the direction found:
         projectile.RigidBody.ApplyLinearVelocity(aim * (15 + power * 2));
+    }
+    
+    function Shotgun(power : Real)
+    {
+        for(var i:Integer = 0; i < 5 + power; ++i)
+        {
+            //create projectile with appropriate damage & attributes:
+            var damage:Integer = 1 + (power as Integer * 1);
+            var projectile:Cog = this.CreateProjectile(damage, Real3(0.5,0.5,1), 2, false);
+            
+            //get the direction for the bullet to travel (more complicated than a straight line, so doesn't use the getdirectiontowardsmouse):
+            var aim:Real3 = Real3(10, 10, 0);
+            var cursor:Real2 = Zero.Mouse.ScreenPosition;
+            var worldCursor:Real3 = this.Player.LevelSettings.CameraViewport.ScreenToWorldZPlane(cursor, 0);
+            aim = Math.Normalize(Real3(worldCursor.X-this.Player.Transform.Translation.X, worldCursor.Y-this.Player.Transform.Translation.Y, 0))
+            + Real3(this.RandomGenerator.Range(-0.25, 0.25), this.RandomGenerator.Range(-0.25, 0.25), 0);
+            aim = Math.Normalize(aim);
+
+            //applies force in the direction found:
+            projectile.RigidBody.ApplyLinearVelocity(aim * (15 + power * 2));
+        }
     }
     
     function HeavyShoot(power : Real)

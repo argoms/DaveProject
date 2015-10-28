@@ -14,7 +14,7 @@ Cog =
 	},
 	Transform = 
 	{
-		Vec3 Translation = [0.948172152, -5.20385408, 4.16475601e-008],
+		Vec3 Translation = [0, 0, 0],
 		Vec3 Scale = [1, 1, 1],
 		Quat Rotation = [0, 0, 0, 1],
 	},
@@ -31,7 +31,7 @@ Cog =
 		string FontName = "4e7bac697bec55c5:Verdana",
 		uint FontSize = 30,
 		string Text = "Sprite Text...",
-		TextAlign Align = Left,
+		TextAlign Align = Center,
 		float PixelsPerUnit = 64,
 		bool Smoothing = true,
 	},

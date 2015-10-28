@@ -52,6 +52,7 @@ class EnemyHealth : ZilchComponent
         if(this.Important)
         {
             --this.Owner.LevelSettings.LevelBehavior.EnemyCounter;
+            this.Important = false;
         }
         
         var particle:Cog = null;

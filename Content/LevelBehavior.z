@@ -79,10 +79,10 @@ class LevelBehavior : ZilchComponent
         //enemy.ChaseTarget.Target = this.PlayerCog.Transform;
         
         
-        this.Ability1 = Ability(this.RandomGenerator.Range(1, 8) as Integer, 1);
+        this.Ability1 = Ability(this.RandomGenerator.Range(1, 9) as Integer, 1);
         this.Ability1.Player = this.PlayerCog;
         
-        this.Ability2 = Ability(this.RandomGenerator.Range(1, 8) as Integer, 1);
+        this.Ability2 = Ability(this.RandomGenerator.Range(1, 9) as Integer, 1);
         this.Ability2.Player = this.PlayerCog;
         
         this.Ability3 = PassiveAbility(this.RandomGenerator.Range(1, 4) as Integer, 1);
@@ -122,9 +122,22 @@ class LevelBehavior : ZilchComponent
         if(this.WaveCleared)
         {
             this.TimePassed += event.Dt;
-            if(this.TimePassed > 2)
+            if(this.TimePassed > 5)
             {
+                if(this.WaveNumber % 2 == 0)
+                {
+                    ++this.Difficulty;
+                    var text:Cog = this.Owner.HudCreator.HudSpace.CreateAtPosition(Archetype.DamageText, Real3(0,-1,1));
+                    text.DamageTextBehavior.SetText("Difficulty increased!");
+                    text.SpriteText.FontSize = 64;
+                    //text.AttachTo(this.PlayerCog);
+                }
                 Console.WriteLine("next wave inc");
+                var text:Cog = this.Owner.HudCreator.HudSpace.CreateAtPosition(Archetype.DamageText, Real3(0,1,1));
+                text.DamageTextBehavior.SetText("Wave incoming!");
+                text.SpriteText.FontSize = 64;
+                //text.AttachTo(this.PlayerCog);
+                
                 this.TimePassed = 0;
                 this.SpawnNextWave();
                 this.WaveCleared = false;
@@ -132,12 +145,14 @@ class LevelBehavior : ZilchComponent
         } else if(this.EnemyCounter < 1 && !this.WaveCleared)
         {
             ++this.WaveNumber;
-            if(this.WaveNumber % 2 == 0)
-            {
-                ++this.Difficulty;
-            }
+            
             this.WaveCleared = true;
             Console.WriteLine("wave cleared");
+            
+            var text:Cog = this.Owner.HudCreator.HudSpace.CreateAtPosition(Archetype.DamageText, Real3(0,1,1));
+            text.DamageTextBehavior.SetText("Wave Cleared!");
+            text.SpriteText.FontSize = 64;
+           // text.AttachTo(this.PlayerCog);
         }
         /*
         this.EnemySpawnCounter += event.Dt;
@@ -253,14 +268,14 @@ class LevelBehavior : ZilchComponent
         {
             if(this.Ability1.MaxLevel == this.Ability1.Power)
             {
-                this.Ability1 = Ability(this.RandomGenerator.Range(1, 8) as Integer, this.Difficulty);
+                this.Ability1 = Ability(this.RandomGenerator.Range(1, 9) as Integer, this.Difficulty);
                 this.Ability1.Player = this.PlayerCog;
             }
         } else if(power == 2)
         {
             if(this.Ability2.MaxLevel == this.Ability2.Power)
             {
-                this.Ability2 = Ability(this.RandomGenerator.Range(1, 8) as Integer, this.Difficulty);
+                this.Ability2 = Ability(this.RandomGenerator.Range(1, 9) as Integer, this.Difficulty);
                 this.Ability2.Player = this.PlayerCog;
             }
         } else if(power == 3)

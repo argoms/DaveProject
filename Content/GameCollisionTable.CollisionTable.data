@@ -2,6 +2,7 @@ CollisionTable =
 {
 	Array RegisteredGroups = 
 	[
+		"5666af764f2c85c4:PlayerProjectile",
 		"4e740859314e5515:DefaultGroup",
 		"56d03a8ce48dfd02:Enemies",
 		"5679445b226ff3b4:MapBorder",
@@ -23,6 +24,16 @@ CollisionTable =
 		{
 			string TypeA = "56d03a8ce48dfd02:Enemies",
 			string TypeB = "5679445b226ff3b4:MapBorder",
+			bool SkipResolution = false,
+			bool SkipDetectingCollision = true,
+			bool StartEvent = false,
+			bool EndEvent = false,
+			bool PersistedEvent = false,
+			bool PreSolveEvent = false,
+		},
+		{
+			string TypeA = "5679445b226ff3b4:MapBorder",
+			string TypeB = "567944702656a631:SafeEnemy",
 			bool SkipResolution = false,
 			bool SkipDetectingCollision = true,
 			bool StartEvent = false,
