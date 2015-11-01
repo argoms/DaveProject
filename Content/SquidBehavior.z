@@ -1,3 +1,5 @@
+//Matt Chasengnou
+
 class SquidBehavior : EnemyBase
 {
     //The squid class of enemies

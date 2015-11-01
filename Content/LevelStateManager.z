@@ -1,5 +1,9 @@
+//Written by Matt Chasengnou
+
 class LevelStateManager : ZilchComponent
 {
+    //Manages parts of the level state relating to player life state and the score
+    
     //Title menu
     [Property]
     var TitleMenu : Level = null;
@@ -23,17 +27,41 @@ class LevelStateManager : ZilchComponent
     //Is false when player dies.
     var PlayerIsAlive : Boolean = true;
     
+    //Used so we only turn the alarm on once per critical state
+    var AlarmIsOn : Boolean = false;
+    
+    //The alarm for critical condition
+    var HealthAlarm : SoundEmitter;
+    
+    //The sound to make when player is about to die
+    [Property]
+    var HealthAlarmSound : SoundCue = null;
+    
+    //Keeps the sound emitter from being overloaded
+    var ExplosionBeingUsed : Boolean = false;
+    
+    //Timer for explosions
+    var ExplosionTimer : Real = 0;
+    
+    //The sound emitter for explosions
+    var ExplosionFXSource : SoundEmitter;
+    
+    //The sound effect for explosions
+    [Property]
+    var ExplosionSound : SoundCue = null;
+    
     function Initialize(init : CogInitializer)
     {
         Zero.Connect(this.Space, Events.LogicUpdate, this.OnLogicUpdate);
         
+        this.HealthAlarm = this.Space.FindObjectByName("HealthAlarm").SoundEmitter;
+        this.ExplosionFXSource = this.Space.FindObjectByName("ExplosionSFX").SoundEmitter;
     }
 
     function OnLogicUpdate(event : UpdateEvent)
     {
         //Add to time if updating
         if (this.PlayerIsAlive) this.Time += event.Dt;
-        
         else
         {
             if (this.GOClock < this.GameOverTime) this.GOClock += event.Dt;
@@ -48,10 +76,48 @@ class LevelStateManager : ZilchComponent
             if (Zero.Keyboard.KeyIsPressed(Keys.O)) this.Space.LoadLevel(this.TitleMenu);
         }
         
+        //Turns off the explosion after next frame
+        if (this.ExplosionTimer != 0)
+        {
+            this.ExplosionBeingUsed = false;
+            this.ExplosionTimer = 0;
+        }
+        if (this.ExplosionBeingUsed) this.ExplosionTimer += event.Dt;
+        
     }
     
+    //Updates the score
     function UpdateScore(amount : Integer)
     {
         if (this.PlayerIsAlive) this.Score += amount;
     }
+    
+    //Turns on the player alarm 
+    function PlayHealthAlarm()
+    {
+        if (!this.AlarmIsOn)
+        {
+            this.HealthAlarm.PlayCue(this.HealthAlarmSound);
+            this.AlarmIsOn = true;
+        }
+    }
+    
+    //Turns off the player alarm
+    function TurnOffHealthAlarm()
+    {
+        if (this.HealthAlarm != null) this.HealthAlarm.Stop();
+        this.AlarmIsOn = false;
+    }
+    
+    //Plays the explosion sound
+    function PlayExplosion()
+    {
+        if(!this.ExplosionBeingUsed)
+        {
+            this.ExplosionFXSource.Stop();
+            this.ExplosionFXSource.PlayCue(this.ExplosionSound);
+            this.ExplosionBeingUsed = true;
+        }
+    }
+    
 }

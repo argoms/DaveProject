@@ -1,10 +1,10 @@
 SoundCue = 
 {
-	SoundPlayMode PlayMode = Single,
-	float Volume = 0.75,
+	SoundPlayMode PlayMode = Looping,
+	float Volume = 1,
 	float VolumeVariation = 0,
-	float Pitch = 0,
-	float PitchVariation = 0.5,
+	float Pitch = -0.600000024,
+	float PitchVariation = 0,
 	float MinDistance = 1,
 	float MaxDistance = 70,
 	float MinAttenuatedVolume = 0,
@@ -13,8 +13,8 @@ SoundCue =
 	Array Sounds = 
 	[
 		{
-			string SoundName = "56d1adf84e75578b:Spiral_Attack1",
-			string GeneratedSoundName = "55017c595ef88bf0:DefaultGeneratedSound",
+			string SoundName = "56c4e71788ebf6ef:Siren",
+			string GeneratedSoundName = "",
 			WhichSoundType WhichToUse = FromFile,
 			float Weight = 1,
 			float LoopEndTime = 0,
@@ -29,6 +29,6 @@ SoundCue =
 	],
 	string RolloffCurveName = "",
 	int Version = 1,
-	RolloffCurveType RolloffCurveType = Linear,
+	RolloffCurveType RolloffCurveType = Error,
 	uint LogCurveSteepnessFactor = 1701080909,
 },

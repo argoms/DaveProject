@@ -103,7 +103,7 @@ Level =
 		},
 		Transform = 
 		{
-			Vec3 Translation = [-0.228162125, -0.0967784077, 50],
+			Vec3 Translation = [0.726598024, -1.55265009, 50],
 			Vec3 Scale = [1, 1, 1],
 			Quat Rotation = [-0, -1.09278471e-008, 0, 1],
 		},
@@ -115,7 +115,7 @@ Level =
 			float FieldOfView = 45,
 			float NearPlane = 0.5,
 			float FarPlane = 500,
-			float Size = 8.98658657,
+			float Size = 14.8163729,
 		},
 		EditorCameraController = 
 		{
@@ -123,7 +123,7 @@ Level =
 			float LookDistance = 50,
 			float VerticalAngle = 0,
 			float HorizontalAngle = 0,
-			Vec3 LookTarget = [-0.228162125, -0.0967784077, -9.97328264e-009],
+			Vec3 LookTarget = [0.726598024, -1.55265009, 3.1760564e-008],
 			float MoveSensitivity = 1,
 		},
 		EditorRenderer = 
@@ -178,7 +178,7 @@ Level =
 		},
 		Transform = 
 		{
-			Vec3 Translation = [-3, 3, 0],
+			Vec3 Translation = [-4, 3, 0],
 			Vec3 Scale = [1, 1, 1],
 			Quat Rotation = [0, 0, 0, 1],
 		},
@@ -193,7 +193,7 @@ Level =
 			SpriteGeometryMode GeometryMode = ZPlane,
 			string SpriteLayer = "52ad5fa30d7fcd50:DefaultSpriteLayer",
 			string FontName = "4e7bac697bec55c5:Verdana",
-			uint FontSize = 60,
+			uint FontSize = 100,
 			string Text = "DAVE",
 			TextAlign Align = Center,
 			float PixelsPerUnit = 64,
@@ -212,7 +212,7 @@ Level =
 		},
 		Transform = 
 		{
-			Vec3 Translation = [-5, 0.5, 0],
+			Vec3 Translation = [-6.5, 0.5, 0],
 			Vec3 Scale = [0.5, 0.5, 0.5],
 			Quat Rotation = [0, 0, 0, 1],
 		},
@@ -227,7 +227,7 @@ Level =
 			SpriteGeometryMode GeometryMode = ZPlane,
 			string SpriteLayer = "52ad5fa30d7fcd50:DefaultSpriteLayer",
 			string FontName = "4e7bac697bec55c5:Verdana",
-			uint FontSize = 30,
+			uint FontSize = 34,
 			string Text = "CONTROLS",
 			TextAlign Align = Left,
 			float PixelsPerUnit = 64,
@@ -262,7 +262,7 @@ Level =
 					SpriteGeometryMode GeometryMode = ZPlane,
 					string SpriteLayer = "52ad5fa30d7fcd50:DefaultSpriteLayer",
 					string FontName = "4e7bac697bec55c5:Verdana",
-					uint FontSize = 30,
+					uint FontSize = 34,
 					string Text = "WASD - Movement",
 					TextAlign Align = Left,
 					float PixelsPerUnit = 64,
@@ -296,7 +296,7 @@ Level =
 					SpriteGeometryMode GeometryMode = ZPlane,
 					string SpriteLayer = "52ad5fa30d7fcd50:DefaultSpriteLayer",
 					string FontName = "4e7bac697bec55c5:Verdana",
-					uint FontSize = 30,
+					uint FontSize = 34,
 					string Text = "L Click - Ability 1",
 					TextAlign Align = Left,
 					float PixelsPerUnit = 64,
@@ -330,7 +330,7 @@ Level =
 					SpriteGeometryMode GeometryMode = ZPlane,
 					string SpriteLayer = "52ad5fa30d7fcd50:DefaultSpriteLayer",
 					string FontName = "4e7bac697bec55c5:Verdana",
-					uint FontSize = 30,
+					uint FontSize = 34,
 					string Text = "R Click - Ability 2",
 					TextAlign Align = Left,
 					float PixelsPerUnit = 64,
@@ -398,7 +398,7 @@ Level =
 					SpriteGeometryMode GeometryMode = ZPlane,
 					string SpriteLayer = "52ad5fa30d7fcd50:DefaultSpriteLayer",
 					string FontName = "4e7bac697bec55c5:Verdana",
-					uint FontSize = 30,
+					uint FontSize = 34,
 					string Text = "1 - Shuffle Ability 1",
 					TextAlign Align = Left,
 					float PixelsPerUnit = 64,
@@ -432,7 +432,7 @@ Level =
 					SpriteGeometryMode GeometryMode = ZPlane,
 					string SpriteLayer = "52ad5fa30d7fcd50:DefaultSpriteLayer",
 					string FontName = "4e7bac697bec55c5:Verdana",
-					uint FontSize = 30,
+					uint FontSize = 34,
 					string Text = "2 - Shuffle Ability 2",
 					TextAlign Align = Left,
 					float PixelsPerUnit = 64,
@@ -466,8 +466,144 @@ Level =
 					SpriteGeometryMode GeometryMode = ZPlane,
 					string SpriteLayer = "52ad5fa30d7fcd50:DefaultSpriteLayer",
 					string FontName = "4e7bac697bec55c5:Verdana",
-					uint FontSize = 30,
-					string Text = "3 - Shuffle Passive Ability",
+					uint FontSize = 34,
+					string Text = "3 - Shuffle Ability 3 (Passive Ability)",
+					TextAlign Align = Left,
+					float PixelsPerUnit = 64,
+					bool Smoothing = true,
+				},
+			},
+			Cog = 
+			{
+				LinkId = 
+				{
+					uint Id = 13,
+				},
+				Named = 
+				{
+					string Name = "SpriteText",
+				},
+				Transform = 
+				{
+					Vec3 Translation = [0, -4, 0],
+					Vec3 Scale = [1, 1, 1],
+					Quat Rotation = [0, 0, 0, 1],
+				},
+				SpriteText = 
+				{
+					bool Visible = true,
+					bool VisibilityCulling = true,
+					bool VisibilityEvents = true,
+					bool CastShadows = false,
+					Vec4 Color = [4, 3.96000051, 0, 1],
+					BlendMode BlendMode = Alpha,
+					SpriteGeometryMode GeometryMode = ZPlane,
+					string SpriteLayer = "52ad5fa30d7fcd50:DefaultSpriteLayer",
+					string FontName = "4e7bac697bec55c5:Verdana",
+					uint FontSize = 34,
+					string Text = "ATTACKS FOLLOW MOUSE CURSOR",
+					TextAlign Align = Left,
+					float PixelsPerUnit = 64,
+					bool Smoothing = true,
+				},
+			},
+			Cog = 
+			{
+				LinkId = 
+				{
+					uint Id = 14,
+				},
+				Named = 
+				{
+					string Name = "SpriteText",
+				},
+				Transform = 
+				{
+					Vec3 Translation = [0, -4, 0],
+					Vec3 Scale = [1, 1, 1],
+					Quat Rotation = [0, 0, 0, 1],
+				},
+				SpriteText = 
+				{
+					bool Visible = true,
+					bool VisibilityCulling = true,
+					bool VisibilityEvents = true,
+					bool CastShadows = false,
+					Vec4 Color = [4, 3.96000051, 0, 1],
+					BlendMode BlendMode = Alpha,
+					SpriteGeometryMode GeometryMode = ZPlane,
+					string SpriteLayer = "52ad5fa30d7fcd50:DefaultSpriteLayer",
+					string FontName = "4e7bac697bec55c5:Verdana",
+					uint FontSize = 34,
+					string Text = "ATTACKS FOLLOW MOUSE CURSOR",
+					TextAlign Align = Left,
+					float PixelsPerUnit = 64,
+					bool Smoothing = true,
+				},
+			},
+			Cog = 
+			{
+				LinkId = 
+				{
+					uint Id = 15,
+				},
+				Named = 
+				{
+					string Name = "SpriteText",
+				},
+				Transform = 
+				{
+					Vec3 Translation = [0, -4, 0],
+					Vec3 Scale = [1, 1, 1],
+					Quat Rotation = [0, 0, 0, 1],
+				},
+				SpriteText = 
+				{
+					bool Visible = true,
+					bool VisibilityCulling = true,
+					bool VisibilityEvents = true,
+					bool CastShadows = false,
+					Vec4 Color = [4, 3.96000051, 0, 1],
+					BlendMode BlendMode = Alpha,
+					SpriteGeometryMode GeometryMode = ZPlane,
+					string SpriteLayer = "52ad5fa30d7fcd50:DefaultSpriteLayer",
+					string FontName = "4e7bac697bec55c5:Verdana",
+					uint FontSize = 34,
+					string Text = "ATTACKS FOLLOW MOUSE CURSOR",
+					TextAlign Align = Left,
+					float PixelsPerUnit = 64,
+					bool Smoothing = true,
+				},
+			},
+			Cog = 
+			{
+				LinkId = 
+				{
+					uint Id = 16,
+				},
+				Named = 
+				{
+					string Name = "SpriteText",
+				},
+				Transform = 
+				{
+					Vec3 Translation = [0, -4, 0],
+					Vec3 Scale = [1, 1, 1],
+					Quat Rotation = [0, 0, 0, 1],
+				},
+				SpriteText = 
+				{
+					bool Visible = true,
+					bool VisibilityCulling = true,
+					bool VisibilityEvents = true,
+					bool CastShadows = false,
+					Vec4 Color = [4, 3.96000051, 0, 1],
+					BlendMode BlendMode = Alpha,
+					SpriteGeometryMode GeometryMode = ZPlane,
+					string SpriteLayer = "52ad5fa30d7fcd50:DefaultSpriteLayer",
+					string FontName = "4e7bac697bec55c5:Verdana",
+					uint FontSize = 34,
+					string Text = "ATTACKS FOLLOW MOUSE CURSOR",
 					TextAlign Align = Left,
 					float PixelsPerUnit = 64,
 					bool Smoothing = true,
@@ -479,7 +615,7 @@ Level =
 	{
 		LinkId = 
 		{
-			uint Id = 13,
+			uint Id = 17,
 		},
 		Named = 
 		{
@@ -487,7 +623,7 @@ Level =
 		},
 		Transform = 
 		{
-			Vec3 Translation = [1.5, 0, 0],
+			Vec3 Translation = [-1.5, 0, 0],
 			Vec3 Scale = [1, 1, 1],
 			Quat Rotation = [0, 0, 0, 1],
 		},
@@ -502,9 +638,9 @@ Level =
 			SpriteGeometryMode GeometryMode = ZPlane,
 			string SpriteLayer = "52ad5fa30d7fcd50:DefaultSpriteLayer",
 			string FontName = "4e7bac697bec55c5:Verdana",
-			uint FontSize = 20,
+			uint FontSize = 34,
 			string Text = "Press SPACE when you're ready...",
-			TextAlign Align = Center,
+			TextAlign Align = Left,
 			float PixelsPerUnit = 64,
 			bool Smoothing = true,
 		},
@@ -514,11 +650,11 @@ Level =
 		string Name = "56d98839ca64b204:LevelChangerObject",
 		LinkId = 
 		{
-			uint Id = 14,
+			uint Id = 18,
 		},
 		Transform = 
 		{
-			Vec3 Translation = [0, 0, 0],
+			Vec3 Translation = [-1, 0, 0],
 			Vec3 Scale = [1, 1, 1],
 			Quat Rotation = [0, 0, 0, 1],
 		},
@@ -531,7 +667,7 @@ Level =
 	{
 		LinkId = 
 		{
-			uint Id = 15,
+			uint Id = 19,
 		},
 		Named = 
 		{
@@ -539,7 +675,7 @@ Level =
 		},
 		Transform = 
 		{
-			Vec3 Translation = [0, -2.96124554, 0],
+			Vec3 Translation = [-1, -3, 0],
 			Vec3 Scale = [1, 1, 1],
 			Quat Rotation = [0, 0, 0, 1],
 		},
@@ -578,7 +714,7 @@ Level =
 	{
 		LinkId = 
 		{
-			uint Id = 16,
+			uint Id = 20,
 		},
 		Named = 
 		{
@@ -586,7 +722,7 @@ Level =
 		},
 		Transform = 
 		{
-			Vec3 Translation = [2.57287216, -1.72227263, 0],
+			Vec3 Translation = [1, -2.5, 0],
 			Vec3 Scale = [1, 1, 1],
 			Quat Rotation = [0, 0, 0, 1],
 		},
@@ -601,9 +737,9 @@ Level =
 			SpriteGeometryMode GeometryMode = ZPlane,
 			string SpriteLayer = "52ad5fa30d7fcd50:DefaultSpriteLayer",
 			string FontName = "4e7bac697bec55c5:Verdana",
-			uint FontSize = 12,
+			uint FontSize = 20,
 			string Text = "Press G to activate god mode",
-			TextAlign Align = Center,
+			TextAlign Align = Left,
 			float PixelsPerUnit = 64,
 			bool Smoothing = true,
 		},
@@ -612,7 +748,7 @@ Level =
 	{
 		LinkId = 
 		{
-			uint Id = 17,
+			uint Id = 21,
 		},
 		Named = 
 		{
@@ -620,7 +756,7 @@ Level =
 		},
 		Transform = 
 		{
-			Vec3 Translation = [2.20356011, -2.05465317, 0],
+			Vec3 Translation = [1, -2, 0],
 			Vec3 Scale = [1, 1, 1],
 			Quat Rotation = [0, 0, 0, 1],
 		},
@@ -635,9 +771,9 @@ Level =
 			SpriteGeometryMode GeometryMode = ZPlane,
 			string SpriteLayer = "52ad5fa30d7fcd50:DefaultSpriteLayer",
 			string FontName = "4e7bac697bec55c5:Verdana",
-			uint FontSize = 12,
+			uint FontSize = 20,
 			string Text = "Press L to automatically spawn the next level",
-			TextAlign Align = Center,
+			TextAlign Align = Left,
 			float PixelsPerUnit = 64,
 			bool Smoothing = true,
 		},
@@ -646,7 +782,7 @@ Level =
 	{
 		LinkId = 
 		{
-			uint Id = 18,
+			uint Id = 22,
 		},
 		Named = 
 		{
@@ -654,7 +790,7 @@ Level =
 		},
 		Transform = 
 		{
-			Vec3 Translation = [1.57573104, -1.43913305, 0],
+			Vec3 Translation = [1, -3, 0],
 			Vec3 Scale = [1, 1, 1],
 			Quat Rotation = [0, 0, 0, 1],
 		},
@@ -669,9 +805,9 @@ Level =
 			SpriteGeometryMode GeometryMode = ZPlane,
 			string SpriteLayer = "52ad5fa30d7fcd50:DefaultSpriteLayer",
 			string FontName = "4e7bac697bec55c5:Verdana",
-			uint FontSize = 12,
-			string Text = "Cheats:",
-			TextAlign Align = Center,
+			uint FontSize = 20,
+			string Text = "Press K to kill the player",
+			TextAlign Align = Left,
 			float PixelsPerUnit = 64,
 			bool Smoothing = true,
 		},
@@ -680,7 +816,7 @@ Level =
 	{
 		LinkId = 
 		{
-			uint Id = 19,
+			uint Id = 23,
 		},
 		Named = 
 		{
@@ -688,7 +824,41 @@ Level =
 		},
 		Transform = 
 		{
-			Vec3 Translation = [0, 1.00148082, 0],
+			Vec3 Translation = [1, -1.5, 0],
+			Vec3 Scale = [1, 1, 1],
+			Quat Rotation = [0, 0, 0, 1],
+		},
+		SpriteText = 
+		{
+			bool Visible = true,
+			bool VisibilityCulling = true,
+			bool VisibilityEvents = true,
+			bool CastShadows = false,
+			Vec4 Color = [1, 1, 1, 0.999899983],
+			BlendMode BlendMode = Alpha,
+			SpriteGeometryMode GeometryMode = ZPlane,
+			string SpriteLayer = "52ad5fa30d7fcd50:DefaultSpriteLayer",
+			string FontName = "4e7bac697bec55c5:Verdana",
+			uint FontSize = 20,
+			string Text = "Cheats:",
+			TextAlign Align = Left,
+			float PixelsPerUnit = 64,
+			bool Smoothing = true,
+		},
+	},
+	Cog = 
+	{
+		LinkId = 
+		{
+			uint Id = 24,
+		},
+		Named = 
+		{
+			string Name = "SpriteText",
+		},
+		Transform = 
+		{
+			Vec3 Translation = [0, -4, 0],
 			Vec3 Scale = [1, 1, 1],
 			Quat Rotation = [0, 0, 0, 1],
 		},
@@ -703,7 +873,7 @@ Level =
 			SpriteGeometryMode GeometryMode = ZPlane,
 			string SpriteLayer = "52ad5fa30d7fcd50:DefaultSpriteLayer",
 			string FontName = "4e7bac697bec55c5:Verdana",
-			uint FontSize = 16,
+			uint FontSize = 20,
 			string Text = "Tip: Newly shuffled abilities' maximum power is based on difficulty",
 			TextAlign Align = Center,
 			float PixelsPerUnit = 64,

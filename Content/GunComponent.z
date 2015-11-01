@@ -1,5 +1,9 @@
+//Matt Chasengnou
+
 class GunComponent : ZilchComponent
 {
+    //A gun component to use with an object
+    
     //The GunComponent uses the sound emitter to make gun shot sounds
     [Dependency]
     var SoundEmitter : SoundEmitter;

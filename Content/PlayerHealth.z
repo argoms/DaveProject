@@ -97,12 +97,15 @@ class PlayerHealth : ZilchComponent
         {
             this.RegenFactor = 0;
             this.KillPlayer();
+            //this.LevelSettings.LevelStateManager.PlayExplosion();
         }
+        
     }
     
     //Updates the information needed for the HP visual
     function UpdateHP()
     {
+        
         //Set the alpha of the display
         this.AlphaHP = this.CurrentHP;
         
@@ -125,27 +128,26 @@ class PlayerHealth : ZilchComponent
                 //Set the scale and offset of the display
                 this.HealthDisplay.Owner.Transform.LocalScale = Real3(6, 6, 6);
                 this.HealthDisplay.Owner.Transform.LocalTranslation = Real3(0.15, -0.15, 0);
+                
+                //Turn off the health alarm when we're at full health
+                this.LevelSettings.LevelStateManager.TurnOffHealthAlarm();
+                
             }
             
             //return;
         //}
         
-        //If we're below half HP, display these color values
-        //if (this.CurrentHP <= this.MaxHP / 2)
-        //{
-        //    this.RedHP = 1.0;
-        //    this.GreenHP = 1.0 * this.CurrentHP / this.MaxHP;
-        //    this.BlueHP = 0.0;
-        //}
-        
-        //If we're in critical condition (below 1/4 HP), start flashing the bar
-        if (this.CurrentHP < this.MaxHP / 4)
+        //If we're in critical condition (below 1/2 HP), start flashing the bar
+        if (this.CurrentHP < this.MaxHP / 2)
         {
             this.GreenHP = this.RNG.Range(0, 1);
             this.AlphaHP = 1;
             
             this.HealthDisplay.Owner.Transform.LocalScale = Real3(6, 6, 6);
             this.HealthDisplay.Owner.Transform.LocalTranslation = Real3(0.15, -0.15, 0);
+            
+            //Sound the alarm
+            this.LevelSettings.LevelStateManager.PlayHealthAlarm();
         }
     }
     
