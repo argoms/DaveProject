@@ -6,6 +6,22 @@
 */
 class PlayerControl : ZilchComponent
 {
+    //MATT
+    
+    //Used to make sounds
+    [Dependency]
+    var SoundEmitter : SoundEmitter;
+        
+    //Switches sound on/off
+    [Property]
+    var UseSound : Boolean = true;
+    
+    //Sound to make when shooting
+    [Property]
+    var ShotSound : SoundCue = null;
+    
+    //END MATT
+    
     [Property] //makes variable pop up in component menu
     var Bullet:Archetype = null; //projectile that gets shot
     [Property]
@@ -40,80 +56,40 @@ class PlayerControl : ZilchComponent
         this.TimePassedShooting += event.Dt;
         
         //ability activation:
-        /*
         if(Zero.Mouse.IsButtonDown(MouseButtons.Left))
         {
-            if(this.CurrentAbility == 1)
+            var shotMade = this.LevelSettings.LevelBehavior.Ability1.Fire();
+            
+            if (shotMade && this.UseSound)
             {
-                this.LevelSettings.LevelBehavior.Ability1.Fire();
-            } else if(this.CurrentAbility == 2)
-            {
-                this.LevelSettings.LevelBehavior.Ability2.Fire();
-            } else if(this.CurrentAbility == 3)
-            {
-                this.LevelSettings.LevelBehavior.Ability3.Fire();
+                this.SoundEmitter.PlayCue(this.ShotSound);
             }
-        }
-        */
-        if(Zero.Mouse.IsButtonDown(MouseButtons.Left))
-        {
-            this.LevelSettings.LevelBehavior.Ability1.Fire();
         }
         if(Zero.Mouse.IsButtonDown(MouseButtons.Right))
         {
-            this.LevelSettings.LevelBehavior.Ability2.Fire();
+            var shotMade = this.LevelSettings.LevelBehavior.Ability2.Fire();
+            
+            if (shotMade && this.UseSound)
+            {
+                this.SoundEmitter.PlayCue(this.ShotSound);
+            }
         }
-        /*
-        if(Zero.Keyboard.KeyIsDown(Keys.Space))
-        {
-            this.LevelSettings.LevelBehavior.Ability3.Fire();
-        }
-        */
         
-        //rerolling: (no cooldown atm)
-        /*
-        if(Zero.Keyboard.KeyIsPressed(Keys.Q))
-        {
-            this.LevelSettings.LevelBehavior.RerollAbility(this.CurrentAbility);
-        }
-        */
         this.UpdateMovement(event.Dt); //moves player
-        //Console.WriteLine("potato");
         
+        //Ability swapping
         if(Zero.Keyboard.KeyIsPressed(Keys.One))
         {
             this.LevelSettings.LevelBehavior.RerollAbility(1);
-        } else if(Zero.Keyboard.KeyIsPressed(Keys.Two))
+        } 
+        else if(Zero.Keyboard.KeyIsPressed(Keys.Two))
         {
             this.LevelSettings.LevelBehavior.RerollAbility(2);
-        } else if(Zero.Keyboard.KeyIsPressed(Keys.Three))
+        } 
+        else if(Zero.Keyboard.KeyIsPressed(Keys.Three))
         {
             this.LevelSettings.LevelBehavior.RerollAbility(3);
         }
-        //ability swapping:
-        /*
-        if(Zero.Keyboard.KeyIsPressed(Keys.One))
-        {
-            this.CurrentAbility = 1;
-            this.Owner.FindChildByName("Ability1Text").SpriteText.Color = Real4(0, 1, 1, 1);
-            this.Owner.FindChildByName("Ability2Text").SpriteText.Color = Real4(1, 1, 1, 1);
-            this.Owner.FindChildByName("Ability3Text").SpriteText.Color = Real4(1, 1, 1, 1);
-        } else if(Zero.Keyboard.KeyIsPressed(Keys.Two))
-        {
-            this.CurrentAbility = 2;
-            this.Owner.FindChildByName("Ability1Text").SpriteText.Color = Real4(1, 1, 1, 1);
-            this.Owner.FindChildByName("Ability2Text").SpriteText.Color = Real4(0, 1, 1, 1);
-            this.Owner.FindChildByName("Ability3Text").SpriteText.Color = Real4(1, 1, 1, 1);
-        } else if(Zero.Keyboard.KeyIsPressed(Keys.Three))
-        {
-            this.CurrentAbility = 3;
-            this.Owner.FindChildByName("Ability1Text").SpriteText.Color = Real4(1, 1, 1, 1);
-            this.Owner.FindChildByName("Ability2Text").SpriteText.Color = Real4(1, 1, 1, 1);
-            this.Owner.FindChildByName("Ability3Text").SpriteText.Color = Real4(0, 1, 1, 1);
-        }
-        */
-        
-        
     }
     
     function UpdateMovement(timePassed:Real)

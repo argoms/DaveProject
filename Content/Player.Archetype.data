@@ -42,7 +42,7 @@ Cog =
 		bool Asleep = false,
 		bool Kinematic = false,
 		bool RotationLocked = true,
-		bool Mode2D = true,
+		bool Mode2D = false,
 		bool AllowSleep = true,
 		bool Inherit2DMode = true,
 		Vec3 Velocity = [0, 0, 0],
@@ -65,6 +65,8 @@ Cog =
 	},
 	PlayerControl = 
 	{
+		bool UseSound = true,
+		string ShotSound = "56c592e6edd300fe:Laser_Shot1",
 		string Bullet = "55a056d3078929b3:Bullet",
 		int MoveSpeed = 500,
 		int Decel = 400,
@@ -84,6 +86,16 @@ Cog =
 	PlayerHealth = 
 	{
 		float RegenFactor = 0.100000001,
+	},
+	SoundEmitter = 
+	{
+		float Volume = 1,
+		float Pitch = 0,
+		bool Positional = true,
+		int Version = 1,
+	},
+	QuickKill = 
+	{
 	},
 	Hierarchy = 
 	{

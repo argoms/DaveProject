@@ -1,10 +1,10 @@
 SoundCue = 
 {
 	SoundPlayMode PlayMode = Single,
-	float Volume = 0.75,
+	float Volume = 0.599999964,
 	float VolumeVariation = 0,
-	float Pitch = 0,
-	float PitchVariation = 0.5,
+	float Pitch = 0.100000001,
+	float PitchVariation = 0,
 	float MinDistance = 1,
 	float MaxDistance = 70,
 	float MinAttenuatedVolume = 0,
@@ -13,7 +13,7 @@ SoundCue =
 	Array Sounds = 
 	[
 		{
-			string SoundName = "56d1adf84e75578b:Spiral_Attack1",
+			string SoundName = "56d1a9b6fbe01f60:Laser_Shot",
 			string GeneratedSoundName = "55017c595ef88bf0:DefaultGeneratedSound",
 			WhichSoundType WhichToUse = FromFile,
 			float Weight = 1,
@@ -30,5 +30,5 @@ SoundCue =
 	string RolloffCurveName = "",
 	int Version = 1,
 	RolloffCurveType RolloffCurveType = Linear,
-	uint LogCurveSteepnessFactor = 1701080909,
+	uint LogCurveSteepnessFactor = 1,
 },

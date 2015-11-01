@@ -1,6 +1,8 @@
+//Matt Chasengnou
+
 class TargetComponent : ZilchComponent
 {
-    
+    //Used to store a target transform
     var Target : Transform = null;
     
 }

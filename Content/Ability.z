@@ -6,6 +6,7 @@
 */
 class Ability 
 {
+    
     var Type:Integer; //type of ability
     var Power:Real;
     var Name:String;
@@ -30,6 +31,7 @@ class Ability
     */
     constructor(abilityType : Integer, abilityStrength : Real)
     {
+        
         //Console.WriteLine(a);
         this.Type = abilityType;
         this.Power = 0;//abilityStrength;
@@ -98,7 +100,7 @@ class Ability
         this.CooldownTimer -= dt;
     }
     
-    function Fire()
+    function Fire() : Boolean
     {
         if(this.CooldownTimer <= 0)
         {
@@ -130,7 +132,10 @@ class Ability
             {
                 this.Shotgun(this.Power);
             }
+            
+            return true;
         }
+        return false;
     }
     
     function BasicShoot(power : Real)

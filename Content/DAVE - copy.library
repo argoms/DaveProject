@@ -1,0 +1,7 @@
+ContentLibrary = 
+{
+	string Name = "DAVE - copy",
+	uint64 LibraryId = 56c59c157aefa109,
+	string SourceControlType = "",
+	bool ReadOnly = false,
+},

@@ -1,9 +1,12 @@
+//Matt Chasengnou
+
 class AddScore : ZilchComponent
 {
     //Value to add to score
     [Property]
     var ScoreValue : Integer = 1;
     
+    //Adds the score value to the score held by the level state manager
     function AddToScore()
     {
         this.LevelSettings.LevelStateManager.UpdateScore(this.ScoreValue);

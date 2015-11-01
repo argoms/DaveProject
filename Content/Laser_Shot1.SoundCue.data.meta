@@ -2,9 +2,9 @@ DataContent =
 {
 	DataBuilder = 
 	{
-		string Name = "Spiralite",
-		uint64 ResourceId = 56d1a6f743314573,
-		string LoaderType = "Cog",
+		string Name = "Laser_Shot1",
+		uint64 ResourceId = 56c592e6edd300fe,
+		string LoaderType = "SoundCue",
 		uint Version = 0,
 		bool ShowInEditor = true,
 	},
@@ -12,7 +12,6 @@ DataContent =
 	{
 		Array Tags = 
 		[
-			"Package",
 			"MattAIContent",
 		],
 	},
