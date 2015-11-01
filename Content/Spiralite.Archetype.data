@@ -6,7 +6,7 @@ Cog =
 	},
 	Named = 
 	{
-		string Name = "Spiralite",
+		string Name = "Enemy",
 	},
 	Archetyped = 
 	{
@@ -14,7 +14,7 @@ Cog =
 	},
 	Transform = 
 	{
-		Vec3 Translation = [9.33827305, -8.63616848, 0],
+		Vec3 Translation = [0, 0, 0],
 		Vec3 Scale = [1, 1, 1],
 		Quat Rotation = [0, 0, 0, 1],
 	},
@@ -28,7 +28,7 @@ Cog =
 		BlendMode BlendMode = Alpha,
 		SpriteGeometryMode GeometryMode = ZPlane,
 		string SpriteLayer = "52ad5fa30d7fcd50:DefaultSpriteLayer",
-		string SpriteSource = "5275aa4d802dd6dc:Square",
+		string SpriteSource = "567825ecc3aa3d10:CurvedTriangle64Glowy",
 		bool RenderMask = false,
 		bool FlipX = false,
 		bool FlipY = false,
@@ -77,7 +77,7 @@ Cog =
 		string MoveSound = "4e1bd44008b4dc2a:DefaultCue",
 		string ChargeSound = "56d1adf84f8feeb7:Spiral_Charge1",
 		string AttackSound = "56d1adf84f8f3a7e:Spiral_Attack1",
-		float MoveSpeed = 5,
+		float MoveSpeed = 1,
 		float MoveRandomRange = 5,
 		float PlayerTrackingDistance = 7,
 		float ChaseDistance = 10,
@@ -87,11 +87,12 @@ Cog =
 		float AttChargeTime = 1.75,
 		float AttSustainTime = 0.699999988,
 		float AttCooldown = 2,
+		float FireRate = 0.100000001,
 		float ActionWaitTime = 1,
 	},
 	BoxCollider = 
 	{
-		bool Ghost = true,
+		bool Ghost = false,
 		bool SendsMessages = true,
 		bool Seamless = true,
 		string MaterialName = "4de020863e872da8:DefaultPhysicsMaterial",
@@ -123,6 +124,18 @@ Cog =
 	{
 		int ScoreValue = 15,
 	},
+	GunComponent = 
+	{
+		bool UseSound = false,
+		string ShootSound = "",
+		bool AutomaticFire = true,
+		string Bullet = "56794bd58ad5db3d:EnemyProjectile",
+		float BulletSpeed = 64,
+		float FireRate = 0.100000001,
+		int MagSize = 1,
+		float ReloadTime = 0.100000001,
+		float FiringError = 0,
+	},
 	Hierarchy = 
 	{
 		Cog = 
@@ -137,8 +150,8 @@ Cog =
 			},
 			Transform = 
 			{
-				Vec3 Translation = [50, 0, 0],
-				Vec3 Scale = [100, 0.200000003, 1],
+				Vec3 Translation = [12.6000004, 0, 0],
+				Vec3 Scale = [2, 1, 1],
 				Quat Rotation = [0, 0, 0, 1],
 			},
 			Sprite = 
@@ -151,23 +164,13 @@ Cog =
 				BlendMode BlendMode = Alpha,
 				SpriteGeometryMode GeometryMode = ZPlane,
 				string SpriteLayer = "52ad5fa30d7fcd50:DefaultSpriteLayer",
-				string SpriteSource = "5275aa4d802dd6dc:Square",
+				string SpriteSource = "5666ed8e12e9a0b0:lasertracer",
 				bool RenderMask = false,
 				bool FlipX = false,
 				bool FlipY = false,
 				bool AnimationActive = true,
 				float AnimationSpeed = 1,
 				uint StartFrame = 0,
-			},
-			BoxCollider = 
-			{
-				bool Ghost = true,
-				bool SendsMessages = true,
-				bool Seamless = true,
-				string MaterialName = "4de020863e872da8:DefaultPhysicsMaterial",
-				string SerializedGroupName = "56d03a8ce48dfd02:Enemies",
-				Vec3 Offset = [0, 0, 0],
-				Vec3 Size = [0.5, 0.5, 0.5],
 			},
 		},
 	},

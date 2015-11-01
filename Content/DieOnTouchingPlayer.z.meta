@@ -1,0 +1,8 @@
+TextContent = 
+{
+	ZilchScriptBuilder = 
+	{
+		string Name = "DieOnTouchingPlayer",
+		uint64 ResourceId = 5678269541e3b5f1,
+	},
+},

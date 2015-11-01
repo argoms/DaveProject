@@ -28,16 +28,16 @@ class GunComponent : ZilchComponent
     [Property]
     var FireRate : Real = 0.0;
     
-    //The amount of ammo in a clip
+    //The amount of ammo in a magazine
     [Property]
-    var AmmoClip : Integer = 1;
+    var MagSize : Integer = 1;
     
     //How long it takes the gun to reload
     [Property]
     var ReloadTime : Real = 0.0;
     
-    //Number of shots fired from the clip
-    //Once equal to the clip size, the gun cannot shoot any more
+    //Number of shots fired from the magazine
+    //Once equal to the magazine size, the gun cannot shoot any more
     var ShotsFired : Integer = 0;
     
     //Degree of error in firing
@@ -83,7 +83,7 @@ class GunComponent : ZilchComponent
         {
             //If the gun is supposed to shoot and there is
             //still ammo, then the gun will shoot
-            if(this.IsShooting && (this.ShotsFired < this.AmmoClip))
+            if(this.IsShooting && (this.ShotsFired < this.MagSize))
             {
                 //Shoot at the target
                 this.ShootBullet(this.TargetDirection);
@@ -91,7 +91,7 @@ class GunComponent : ZilchComponent
                 //Increment the number of shots fired
                 ++this.ShotsFired;
                 
-                if(this.ShotsFired >= this.AmmoClip)
+                if(this.ShotsFired >= this.MagSize)
                 {
                     this.IsShooting = false;
                 }
@@ -126,8 +126,8 @@ class GunComponent : ZilchComponent
         
         if (this.UseSound)
         {
-        //Make gunshot sound
-        this.SoundEmitter.PlayCue(this.ShootSound);
+            //Make gunshot sound
+            this.SoundEmitter.PlayCue(this.ShootSound);
         }
         
     }

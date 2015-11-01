@@ -69,12 +69,12 @@ class ChaseTarget : ZilchComponent
                     if(this.ZombieTimer < 0)
                     {
                         this.ZombieTimer = 0.5;
-                        var result:Real = this.RandomGenerator.Range(1,10);
-                        if(result < 4)
+                        var result:Real = this.RandomGenerator.Range(1,16);
+                        if(result < 8)
                         {
                             this.Movement = this.Target.Translation - this.Owner.Transform.Translation;
                             
-                        } else if(result > 4 && result < 8)
+                        } else if(result > 8 && result < 11)
                         {
                             var a = this.Target.Translation - this.Owner.Transform.Translation;
                             this.Movement = Real3(a.Y, -a.X, 0);

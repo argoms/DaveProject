@@ -15,6 +15,7 @@ class PlayerProjectileExplodeOnDeath : ZilchComponent
     var ExplosionSpeed:Real = 5; //speed of spawned projectiles 
     var ExplodeOnCollision:Boolean = true; //whether or not explosion triggers on colliding with another object
     var ExplodeOnLifeEnd:Boolean = true; //whether or not explosion triggers if projectile finishes full lifespan
+    var ProjectilesPenetrate:Boolean = false; //whether or not spawned projectiles penetrate targets
     
     var CanPenetrateTargets:Boolean = false; //whether or not spawned projectiles can penetrate targets
     
@@ -36,6 +37,7 @@ class PlayerProjectileExplodeOnDeath : ZilchComponent
                 var explosionVector:Real3 = Math.Normalize(Real3(this.RandomGenerator.Range(-1, 1), this.RandomGenerator.Range(-1, 1), 0))*this.ExplosionSpeed;
                 particle.RigidBody.ApplyLinearVelocity(explosionVector);
                 particle.PlayerProjectileLogic.Damage = this.ProjectileDamage as Integer;
+                particle.PlayerProjectileLogic.PenetratesTargets = this.ProjectilesPenetrate;
             }
         }
     }

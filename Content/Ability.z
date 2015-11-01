@@ -15,7 +15,11 @@ class Ability
     var Cooldown:Real;
     var CooldownTimer:Real;
     
+    var PowerUpTimer:Real = 0;
+    
     var RandomGenerator:Random = Random();//random number generator
+    
+    var MaxLevel:Real;
     
     /* Abilities:
     * 1: Basic shooting
@@ -28,7 +32,8 @@ class Ability
     {
         //Console.WriteLine(a);
         this.Type = abilityType;
-        this.Power = abilityStrength;
+        this.Power = 0;//abilityStrength;
+        this.MaxLevel = abilityStrength;
 
         //set ability info based on input:
         //would be so much easier if there were switch statements in Zilch :c
@@ -65,13 +70,31 @@ class Ability
         } else if(abilityType == 7)
         {
             this.Name = "Spray";
-            this.Cooldown = 0.1;
+            this.Cooldown = 0.2 - (this.Power as Real)*0.01;
+            if(this.Cooldown < 0.08)
+            {
+                this.Cooldown = 0.08;
+            }
+            this.CooldownTimer = 0;
+        } else if(abilityType == 8)
+        {
+            this.Name = "Shotgun";
+            this.Cooldown = 0.8;
             this.CooldownTimer = 0;
         }
     }
     
     function Simulate(dt:Real)
     {
+        if(this.Power < this.MaxLevel)
+        {
+            this.PowerUpTimer += dt;
+            if(this.PowerUpTimer > 1.5)
+            {
+                ++this.Power;
+                this.PowerUpTimer = 0;
+            }
+        }
         this.CooldownTimer -= dt;
     }
     
@@ -103,6 +126,9 @@ class Ability
             } else if(this.Type == 7)
             {
                 this.RapidShoot(this.Power);
+            } else if(this.Type == 8)
+            {
+                this.Shotgun(this.Power);
             }
         }
     }
@@ -118,7 +144,7 @@ class Ability
         var aim:Real3 = this.GetDirectionTowardsMouse();
 
         //applies force in the direction found:
-        projectile.RigidBody.ApplyLinearVelocity(aim*15*this.Power*this.Power);
+        projectile.RigidBody.ApplyLinearVelocity(aim*(15 + this.Power * 2));
     }
     
     function RapidShoot(power : Real)
@@ -136,7 +162,28 @@ class Ability
         aim = Math.Normalize(aim);
 
         //applies force in the direction found:
-        projectile.RigidBody.ApplyLinearVelocity(aim*15*this.Power*this.Power);
+        projectile.RigidBody.ApplyLinearVelocity(aim * (15 + power * 2));
+    }
+    
+    function Shotgun(power : Real)
+    {
+        for(var i:Integer = 0; i < 5 + power; ++i)
+        {
+            //create projectile with appropriate damage & attributes:
+            var damage:Integer = 1 + (power as Integer * 1);
+            var projectile:Cog = this.CreateProjectile(damage, Real3(0.5,0.5,1), 2, false);
+            
+            //get the direction for the bullet to travel (more complicated than a straight line, so doesn't use the getdirectiontowardsmouse):
+            var aim:Real3 = Real3(10, 10, 0);
+            var cursor:Real2 = Zero.Mouse.ScreenPosition;
+            var worldCursor:Real3 = this.Player.LevelSettings.CameraViewport.ScreenToWorldZPlane(cursor, 0);
+            aim = Math.Normalize(Real3(worldCursor.X-this.Player.Transform.Translation.X, worldCursor.Y-this.Player.Transform.Translation.Y, 0))
+            + Real3(this.RandomGenerator.Range(-0.25, 0.25), this.RandomGenerator.Range(-0.25, 0.25), 0);
+            aim = Math.Normalize(aim);
+
+            //applies force in the direction found:
+            projectile.RigidBody.ApplyLinearVelocity(aim * (15 + power * 2));
+        }
     }
     
     function HeavyShoot(power : Real)
@@ -158,7 +205,7 @@ class Ability
         
         projectile.AddComponentByName("PlayerProjectileExplodeOnDeath");
         var projectileMod1:PlayerProjectileExplodeOnDeath = projectile.PlayerProjectileExplodeOnDeath;
-        projectileMod1.NumProjectiles = 24;
+        projectileMod1.NumProjectiles = 16 + power * 2;
         projectileMod1.ProjectileDamage = power as Integer * 2;
         projectileMod1.Color = Real4(0, 0.5, 1, 0.5);
         //projectileMod1.ExplodeOnCollision = false;
@@ -166,7 +213,7 @@ class Ability
         
 
         //applies force in the direction found:
-        projectile.RigidBody.ApplyLinearVelocity(aim*5*this.Power);
+        projectile.RigidBody.ApplyLinearVelocity(aim * 5);
     }
     
     function FastShoot(power : Real)
@@ -182,7 +229,7 @@ class Ability
         var aim:Real3 = this.GetDirectionTowardsMouse();
 
         //applies force in the direction found:
-        projectile.RigidBody.ApplyLinearVelocity(aim*(20+10*this.Power));
+        projectile.RigidBody.ApplyLinearVelocity(aim * (20 + 10 * power));
     }
     
     function Mine(power : Real)
@@ -191,12 +238,12 @@ class Ability
         var damage:Integer = power as Integer;
         var projectile:Cog = this.CreateProjectile(damage, 
                                                     Real3(0.5, 0.5, 1), 
-                                                    10, 
+                                                    13 - power, 
                                                     false);
         
         projectile.AddComponentByName("PlayerProjectileExplodeOnDeath");
         var projectileMod1:PlayerProjectileExplodeOnDeath = projectile.PlayerProjectileExplodeOnDeath;
-        projectileMod1.NumProjectiles = 16;
+        projectileMod1.NumProjectiles = 16 + power * 2;
         projectileMod1.ProjectileDamage = power as Integer;
         projectileMod1.Color = Real4(0, 0.5, 1, 0.5);
     }
@@ -204,15 +251,19 @@ class Ability
     function Bomb(power : Real)
     {
         //create projectile with appropriate damage & attributes:
-        var damage:Integer = power as Integer * 3;
+        var damage:Integer = power as Integer;
         var projectile:Cog = this.CreateProjectile(damage, 
                                                     Real3(1, 1, 1), 
-                                                    1, 
-                                                    true);
+                                                    0, 
+                                                    false);
         
-        projectile.AddComponentByName("ExpandObject");
-        var explosion = projectile.ExpandObject;
-        explosion.Created();
+        projectile.AddComponentByName("PlayerProjectileExplodeOnDeath");
+        var projectileMod1:PlayerProjectileExplodeOnDeath = projectile.PlayerProjectileExplodeOnDeath;
+        projectileMod1.NumProjectiles = 16;
+        projectileMod1.ProjectileDamage = power as Integer * 2 + 2;
+        projectileMod1.Color = Real4(0, 0.5, 1, 0.5);
+        projectileMod1.ProjectilesPenetrate = true;
+        projectileMod1.ExplosionSpeed = 10;
     }
     
     function Dash(power : Real)

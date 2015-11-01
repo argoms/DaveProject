@@ -114,6 +114,14 @@ class SpiraliteBehavior : EnemyBase
     //Indicates whether the attack has been executed
     var AttackReleased : Boolean = false;
     
+    //How quickly projectiles are fired when attacking
+    [Property]
+    var FireRate : Real = 0.1;
+    
+    //rof counter for fire rate
+    var FireRateCounter : Real = 0;
+    
+    
     function Initialize(init : CogInitializer)
     {
         Zero.Connect(this.Space, Events.LogicUpdate, this.OnLogicUpdate);
@@ -127,6 +135,8 @@ class SpiraliteBehavior : EnemyBase
             this.Direction *= -1;
         }
         
+
+        
         //Randomize the distances from the player that the
         //spiralite will track movement
         var randomFactor = this.RNG.Range(1 - this.DistanceRandomRange,
@@ -139,10 +149,12 @@ class SpiraliteBehavior : EnemyBase
         
         this.AttackSpriteObject = this.Owner.FindChildByName("Beam");
         
-        this.AttackSpriteObject.Collider.SendsEvents = false;
+        //this.AttackSpriteObject.Collider.SendsEvents = false;
         this.AttackSpriteObject.Sprite.Visible = false;
         
         this.CancelAttack();
+        
+        this.Owner.GunComponent.TargetDirection = this.Owner.Orientation.WorldForward;
         
     }
     
@@ -159,6 +171,8 @@ class SpiraliteBehavior : EnemyBase
         
         if (!this.IsAttacking)
         {
+            //this.Owner.GunComponent.IsShooting = false;
+            
             //Set the target to the player's position
             //DELETE AFTER INTEGRATING WITH MAIN PROJECT
             this.TestTarget = this.PlayerTransform.WorldTranslation;
@@ -170,6 +184,16 @@ class SpiraliteBehavior : EnemyBase
             //    this.SoundEmitter.Stop();
             //    this.SoundEmitter.PlayCue(this.MoveSound);
             //}
+        } else if(this.AttackReleased) {
+            this.Owner.GunComponent.IsShooting = true;
+            
+            
+            this.FireRateCounter += event.Dt;
+            if(this.FireRateCounter >= this.FireRate)
+            {
+                this.Owner.GunComponent.ShootBullet(this.Owner.Orientation.WorldForward);
+                this.FireRateCounter = 0;
+            }
         }
         
         this.ActionTimer -= event.Dt;
@@ -226,6 +250,7 @@ class SpiraliteBehavior : EnemyBase
                 this.AttCoolTimer = this.AttCooldown;
                 
                 this.IsAttacking = true;
+                //this.TestTarget = this.PlayerTransform.Translation + this.PlayerTransform.Owner.RigidBody.Velocity*0.1;
                 
                 this.DragEffect.Drag = 2;
                 
@@ -239,8 +264,8 @@ class SpiraliteBehavior : EnemyBase
         {
             //movementVector = Math.Lerp(movementVector, Real3.Zero, 0.1);
             
-            this.TestTarget = this.Owner.Transform.WorldTranslation
-                            + (distanceFromPlayer * this.Orientation.WorldForward);
+            //this.TestTarget = this.Owner.Transform.WorldTranslation
+               //             + (distanceFromPlayer * this.Orientation.WorldForward);
             
             this.AttTimer += event.Dt;
             if (this.AttTimer >= this.AttChargeTime)
@@ -296,7 +321,8 @@ class SpiraliteBehavior : EnemyBase
     {
         this.AttackSpriteObject.Sprite.Color = Real4(1, 0, 0, 1);
         
-        this.AttackSpriteObject.Collider.SendsEvents = true;
+        //this.AttackSpriteObject.Collider.SendsEvents = true;
+        //this.AttackSpriteObject.Collider.CollisionGroup = CollisionGroup.Enemies;
         
         if (this.UseSound && this.AttackSound != null)
         {
@@ -311,6 +337,7 @@ class SpiraliteBehavior : EnemyBase
         this.AttackSpriteObject.Sprite.Visible = false;
         this.AttackSpriteObject.Sprite.Color = Real4(0, 0.9, 1, 1);
         
-        this.AttackSpriteObject.Collider.SendsEvents = false;
+        //this.AttackSpriteObject.Collider.SendsEvents = false;
+        //this.AttackSpriteObject.Collider.CollisionGroup = null;
     }
 }

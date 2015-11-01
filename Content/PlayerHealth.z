@@ -50,7 +50,11 @@ class PlayerHealth : ZilchComponent
 
     function OnLogicUpdate(event : UpdateEvent)
     {
-        
+        if(Zero.Keyboard.KeyIsPressed(Keys.G))
+        {
+            this.MaxHP = 90.01;
+            this.RegenFactor = 1000;
+        }
         //If  the player is not at max HP, then recover HP
         if ((this.CurrentHP < this.MaxHP))
         {
@@ -62,11 +66,14 @@ class PlayerHealth : ZilchComponent
             }
         }
         
+        
         //STUFF FOR HP DISPLAY BELOW
         
         this.UpdateHP();
         
         this.HealthDisplay.Color = Real4(this.RedHP, this.GreenHP, this.BlueHP, this.AlphaHP);
+        
+        //Console.WriteLine(this.CurrentHP);
         
     }
     
@@ -83,11 +90,12 @@ class PlayerHealth : ZilchComponent
     //Makes the player take damage
     function TakeDamage()
     {
-        this.CurrentHP -= 0.01;
+        this.CurrentHP -= 0.2;
         
         //Kill the player if no health remains
         if (this.CurrentHP <= 0)
         {
+            this.RegenFactor = 0;
             this.KillPlayer();
         }
     }

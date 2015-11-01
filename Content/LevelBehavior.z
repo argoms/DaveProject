@@ -58,9 +58,18 @@ class LevelBehavior : ZilchComponent
     [Property]
     var Enemy5SpawnRate : Integer = 0;
     
+    [Property]
+    var MapSize : Real = 38; //size of playable area plus a slight buffer zone
+    
+    var Difficulty : Integer = 1;
+    var WaveNumber : Integer = 1; //current wave number
+    var EnemyCounter : Integer = 0;
+    var WaveCleared : Boolean = false;
+    
     
     function Initialize(init : CogInitializer)
     {
+        
         Zero.Connect(this.Space, Events.LogicUpdate, this.OnLogicUpdate);
         this.PlayerCog = this.Space.CreateAtPosition(Archetype.Player, Real3(0,0,0));
         var camera = this.Space.CreateAtPosition(Archetype.PlayerCamera, Real3(0,0,40));
@@ -70,15 +79,16 @@ class LevelBehavior : ZilchComponent
         //enemy.ChaseTarget.Target = this.PlayerCog.Transform;
         
         
-        this.Ability1 = Ability(this.RandomGenerator.Range(1, 8) as Integer, 1);
+        this.Ability1 = Ability(this.RandomGenerator.Range(1, 9) as Integer, 1);
         this.Ability1.Player = this.PlayerCog;
         
-        this.Ability2 = Ability(this.RandomGenerator.Range(1, 8) as Integer, 1);
+        this.Ability2 = Ability(this.RandomGenerator.Range(1, 9) as Integer, 1);
         this.Ability2.Player = this.PlayerCog;
         
         this.Ability3 = PassiveAbility(this.RandomGenerator.Range(1, 4) as Integer, 1);
         this.Ability3.Player = this.PlayerCog;
         
+        /*
         //Add the enemies to the spawn list
         for (var i: Integer = 0; i < this.Enemy1SpawnRate; i += 1)
         {
@@ -99,13 +109,85 @@ class LevelBehavior : ZilchComponent
         for (var i: Integer = 0; i < this.Enemy5SpawnRate; i += 1)
         {
             this.EnemyList.Add(this.Enemy5);
-        }
+        } */
         
+        //first wave stuff:
+        var firstWave:EnemyWave = new EnemyWave(1);
+        this.SpawnWave(firstWave);
+        this.EnemyCounter += firstWave.EnemyList.Count;
     }
-
+    
     function OnLogicUpdate(event : UpdateEvent)
     {
+        
+        if(Zero.Keyboard.KeyIsPressed(Keys.L))
+        {
+            ++this.WaveNumber;
+                
+            this.WaveCleared = true;
+            //Console.WriteLine("wave cleared");
+            
+            var text:Cog = this.Owner.HudCreator.HudSpace.CreateAtPosition(Archetype.DamageText, Real3(0,1,1));
+            text.DamageTextBehavior.SetText("Wave Cleared!");
+            text.SpriteText.FontSize = 64;
+            this.TimePassed = 0;
+            if(this.WaveNumber % 2 == 0)
+                {
+                    ++this.Difficulty;
+                    var text2:Cog = this.Owner.HudCreator.HudSpace.CreateAtPosition(Archetype.DamageText, Real3(0,-1,1));
+                    text2.DamageTextBehavior.SetText("Difficulty increased!");
+                    text2.SpriteText.FontSize = 64;
+                }
+        }
         this.TimePassed += event.Dt;
+        if(this.WaveCleared)
+        {
+            //wave interlude behavior:
+            
+            if(this.TimePassed > 5)
+            {
+                //spawn text popups:
+                if(this.WaveNumber % 2 == 0)
+                {
+                    ++this.Difficulty;
+                    var text:Cog = this.Owner.HudCreator.HudSpace.CreateAtPosition(Archetype.DamageText, Real3(0,-1,1));
+                    text.DamageTextBehavior.SetText("Difficulty increased!");
+                    text.SpriteText.FontSize = 64;
+                }
+                //Console.WriteLine("next wave inc");
+                var text:Cog = this.Owner.HudCreator.HudSpace.CreateAtPosition(Archetype.DamageText, Real3(0,1,1));
+                text.DamageTextBehavior.SetText("Wave incoming!");
+                text.SpriteText.FontSize = 64;
+                
+                //reset wave info:
+                this.TimePassed = 0;
+                this.SpawnNextWave();
+                this.WaveCleared = false;
+            }
+        } else 
+        {
+            //wave clear popup:
+            if(this.EnemyCounter < 1)
+            {
+                ++this.WaveNumber;
+                
+                this.WaveCleared = true;
+                //Console.WriteLine("wave cleared");
+                
+                var text:Cog = this.Owner.HudCreator.HudSpace.CreateAtPosition(Archetype.DamageText, Real3(0,1,1));
+                text.DamageTextBehavior.SetText("Wave Cleared!");
+                text.SpriteText.FontSize = 64;
+                this.TimePassed = 0;
+            }
+        }
+        
+        //checks if the enemy counter has bugged out and everything's dead but it's not registering as next wave:
+        Console.WriteLine(this.Space.FindAllObjectsByName("Enemy").IsNotEmpty);
+        if(!(this.Space.FindAllObjectsByName("Enemy").IsNotEmpty) && !this.WaveCleared && this.TimePassed > 2)
+        {
+            this.EnemyCounter = 0;
+        }
+        /*
         this.EnemySpawnCounter += event.Dt;
         if(this.EnemySpawnCounter > 1)
         {
@@ -138,8 +220,9 @@ class LevelBehavior : ZilchComponent
                 } 
             }
             
-        }
+        }*/
         
+        /*
         this.PickupSpawnCounter += event.Dt;
         if(this.PickupSpawnCounter > 2)
         {
@@ -151,7 +234,7 @@ class LevelBehavior : ZilchComponent
                 //this.SpawnPickup(spawnPosition);
             } 
             
-        }
+        }*/
         
         this.Ability1.Simulate(event.Dt);
         this.Ability2.Simulate(event.Dt);
@@ -189,11 +272,21 @@ class LevelBehavior : ZilchComponent
     {
         var enemy:Cog = this.Space.CreateAtPosition(this.EnemyList[enemyIndex], position);
         
-        if (enemy.ChaseTarget != null) enemy.ChaseTarget.Target = this.PlayerCog.Transform;
         
-        if (enemy.MissileEnemyBehavior != null) enemy.MissileEnemyBehavior.Target = this.PlayerCog.Transform;
+        if (enemy.ChaseTarget != null)
+        {
+            enemy.ChaseTarget.Target = this.PlayerCog.Transform;
+        }
         
-        if (enemy.TargetComponent != null) enemy.TargetComponent.Target = this.PlayerCog.Transform;
+        if (enemy.MissileEnemyBehavior != null) 
+        {
+            enemy.MissileEnemyBehavior.Target = this.PlayerCog.Transform;
+        }
+        
+        if (enemy.TargetComponent != null)
+        {
+            enemy.TargetComponent.Target = this.PlayerCog.Transform;
+        }
     }
     
     
@@ -202,20 +295,86 @@ class LevelBehavior : ZilchComponent
         var pickup:Cog = this.Space.CreateAtPosition(Archetype.Pickup, position);
     }
     
-    function RerollAbility(power : Integer)
+    function RerollAbility(power : Integer) //changes abilities
     {
         if(power == 1)
         {
-            this.Ability1 = Ability(this.RandomGenerator.Range(1, 8) as Integer, 1);
-            this.Ability1.Player = this.PlayerCog;
+            if(this.Ability1.MaxLevel == this.Ability1.Power)
+            {
+                this.Ability1 = Ability(this.RandomGenerator.Range(1, 9) as Integer, this.Difficulty);
+                this.Ability1.Player = this.PlayerCog;
+            }
         } else if(power == 2)
         {
-            this.Ability2 = Ability(this.RandomGenerator.Range(1, 8) as Integer, 1);
-            this.Ability2.Player = this.PlayerCog;
+            if(this.Ability2.MaxLevel == this.Ability2.Power)
+            {
+                this.Ability2 = Ability(this.RandomGenerator.Range(1, 9) as Integer, this.Difficulty);
+                this.Ability2.Player = this.PlayerCog;
+            }
         } else if(power == 3)
         {
-            this.Ability3 = PassiveAbility(this.RandomGenerator.Range(1, 4) as Integer, 1);
-            this.Ability3.Player = this.PlayerCog;
+            if(this.Ability3.MaxLevel == this.Ability3.Power)
+            {
+                this.Ability3 = PassiveAbility(this.RandomGenerator.Range(1, 4) as Integer, this.Difficulty);
+                this.Ability3.Player = this.PlayerCog;
+            }
         } 
+    }
+    
+    function SpawnNextWave() //called to the next wave of enemies
+    {
+        var newWave = new EnemyWave(this.WaveNumber); //something something identities joke
+        this.SpawnWave(newWave);
+        this.EnemyCounter += newWave.EnemyList.Count;
+    }
+    
+    function SpawnWave(wave : EnemyWave) //spawns a specific wave of enemies
+    {
+        var position:Real3 = Real3(0, this.MapSize/2, 0);
+        var counter:Integer = 0;
+        var halfMap:Real = this.MapSize / 2;
+        for(var i : Integer = 0; i < wave.EnemyList.Count; ++i)
+        {
+            
+            var enemy:Cog = this.Space.CreateAtPosition(wave.EnemyList[i], position);
+            
+            //adjust relevant components
+            enemy.EnemyHealth.Important = true;
+            
+            if (enemy.ChaseTarget != null)
+            {
+                enemy.ChaseTarget.Target = this.PlayerCog.Transform;
+            }
+
+            if (enemy.MissileEnemyBehavior != null) 
+            {
+                enemy.MissileEnemyBehavior.Target = this.PlayerCog.Transform;
+            }
+
+            if (enemy.TargetComponent != null)
+            {
+                enemy.TargetComponent.Target = this.PlayerCog.Transform;
+            }
+
+            
+            //rotate spawn position going counter clockwise:
+            if(counter == 0)
+            {
+                position = Real3(halfMap, halfMap/2 + i/2, 0);
+                ++counter;
+            } else if(counter == 1)
+            {
+                position = Real3(halfMap/2 + i/2, -halfMap, 0);
+                ++counter;
+            } else if(counter == 2)
+            {
+                position = Real3(-halfMap, halfMap/2 + i/2, 0);
+                ++counter;
+            } else if(counter == 3)
+            {
+                position = Real3(halfMap/2 + i/2, halfMap, 0);
+                counter = 0;
+            } 
+        }
     }
 }

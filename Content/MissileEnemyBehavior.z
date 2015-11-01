@@ -36,6 +36,9 @@ class MissileEnemyBehavior : ZilchComponent
     
     var Shooting:Boolean = false; //whether the enemy is shooting or not
     
+    [Property]
+    var SpawnType:Archetype = Archetype.MiniEnemy;
+    
     function Initialize(init : CogInitializer)
     {
         Zero.Connect(this.Space, Events.LogicUpdate, this.OnLogicUpdate);
@@ -50,6 +53,7 @@ class MissileEnemyBehavior : ZilchComponent
             if(this.TimeCounter > this.TimeBetweenVolleys)
             {
                 this.Shooting = true;
+                this.Owner.ChaseTarget.Disabled = true;
             }
         } else {
             if(this.TimeCounter > this.FireRate)
@@ -62,6 +66,7 @@ class MissileEnemyBehavior : ZilchComponent
                 //stop shooting if volley completed:
                 if(this.ShotCounter == this.ShotsPerVolley)
                 {
+                    this.Owner.ChaseTarget.Disabled = false;
                     this.Shooting = false;
                     this.ShotCounter = 0;
                 }
@@ -71,9 +76,12 @@ class MissileEnemyBehavior : ZilchComponent
     
     function Shoot()
     {
-        var enemy:Cog = this.Space.CreateAtPosition(Archetype.MiniEnemy, this.Owner.Transform.Translation); //spawned missile object
-        enemy.ChaseTarget.Target = this.Target;
-        
+        var enemy:Cog = this.Space.CreateAtPosition(this.SpawnType, this.Owner.Transform.Translation); //spawned missile object
+        enemy.EnemyHealth.Important = false;
+        if(enemy.ChaseTarget != null)
+        {
+            enemy.ChaseTarget.Target = this.Target;
+        }
         //MATT
         
         if (this.UseSound) this.SoundEmitter.PlayCue(this.ShootSound);
